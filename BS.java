@@ -4,7 +4,7 @@ import mySimulator.*;
 
 public class BS extends Node
 {
-	ArrayList<UE> ueList = new ArrayList<UE>();
+	ArrayList<Node> ueList = new ArrayList<Node>();
 	
 	BS()
 	{
@@ -14,7 +14,7 @@ public class BS extends Node
 		super.antennaGain = 14;
 	}
 	
-	public void addUE(ArrayList<UE> ueList)
+	public void addUE(ArrayList<Node> ueList)
 	{
 		this.ueList.addAll(ueList);
 	}

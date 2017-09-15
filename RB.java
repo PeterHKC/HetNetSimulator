@@ -4,7 +4,7 @@ import mySimulator.*;
 
 public class RB
 {
-	public ArrayList<Connection> connList = new ArrayList<Connection>();
+	public HashMap<Node, Connection> connMap = new HashMap<Node,Connection>();
 	public ArrayList<Node> bsList = new ArrayList<Node>();
 	public double totalSignal = 0.0;
 	public double SC = 12;
@@ -15,15 +15,17 @@ public class RB
 	
 	public void add(Connection conn)
 	{
-		this.connList.add(conn);
+		this.connMap.put(conn.ue, conn);
 		this.bsList.add(conn.bs);
 	}
 	
 	public void add(ArrayList<Connection> conn)
 	{
-		this.connList.addAll(conn);
 		for(int i = 0; i < conn.size(); i++)
+		{
+			this.connMap.put(conn.get(i).ue, conn.get(i));
 			this.bsList.add(conn.get(i).bs);
+		}
 	}
 	
 	public double getTotalSignal(Node ue)
@@ -36,10 +38,6 @@ public class RB
 		return this.totalSignal;
 	}
 	
-	public double dataRate(Connection conn)
-	{
-		conn.setSINR(this.getTotalSignal(conn.ue));
-		return (conn.efficiency()*this.SC*this.SY)/this.T;
-	}
+	
 }
 

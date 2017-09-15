@@ -34,7 +34,7 @@ public class Simulator
 			this.rbList.add(rb);
 		}
 		this.setUserAssociation();
-		System.out.println(this.rbList.get(0).dataRate(this.connList.get(0)));
+		System.out.println(this.connList.get(0).dataRate(this.rbList.get(0)));
 	}
 	
 	public void setUserAssociation()

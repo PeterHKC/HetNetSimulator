@@ -4,7 +4,7 @@ import mySimulator.*;
 
 public class UE extends Node
 {
-	ArrayList<BS> bsList = new ArrayList<BS>();
+	ArrayList<Node> bsList = new ArrayList<Node>();
 	
 	UE(){}
 	
@@ -15,7 +15,7 @@ public class UE extends Node
 		super.id = id;
 	}
 	
-	public void addBS(ArrayList<BS> bsList)
+	public void addBS(ArrayList<Node> bsList)
 	{
 		this.bsList.addAll(bsList);
 	}
