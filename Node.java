@@ -24,9 +24,9 @@ public class Node
 		this.y = y;
 	}
 	
-	public void println()
+	public void print()
 	{
 		this.id = this.hashCode();
-		System.out.println("node: "+Integer.toHexString(this.hashCode())+" in ("+String.valueOf(this.x)+", "+String.valueOf(this.y)+")");
+		System.out.print("node: "+Integer.toHexString(this.hashCode())+" in ("+String.valueOf(this.x)+", "+String.valueOf(this.y)+")\t");
 	}
 }

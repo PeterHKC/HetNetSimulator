@@ -10,8 +10,8 @@ public class UE extends Node
 	
 	UE(int id)
 	{
-		super.x = 1.0;
-		super.y = 1.0;
+		super.x = 1.0+id;
+		super.y = 1.0+id;
 		super.id = id;
 	}
 	

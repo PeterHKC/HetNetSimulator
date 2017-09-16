@@ -4,12 +4,10 @@ import mySimulator.*;
 
 public class RB
 {
+	//ue, conn
 	public HashMap<Node, Connection> connMap = new HashMap<Node,Connection>();
 	public ArrayList<Node> bsList = new ArrayList<Node>();
-	public double totalSignal = 0.0;
-	public double SC = 12;
-	public double SY = 7;
-	public double T = 0.5;
+
 	
 	RB(){}
 	
@@ -30,12 +28,13 @@ public class RB
 	
 	public double getTotalSignal(Node ue)
 	{
+		double t = 0.0;
 		for(int i = 0; i < this.bsList.size(); i++)
 		{
 			Connection conn = new Connection(this.bsList.get(i),ue);
-			this.totalSignal = this.totalSignal + conn.getSignal();
+			t = t + conn.getSignal();
 		}
-		return this.totalSignal;
+		return t;
 	}
 	
 	

@@ -12,6 +12,10 @@ public class Connection
 	public double N0 = 9;
 	public double SINR;
 	
+	public double SC = 12;
+	public double SY = 7;
+	public double T = 0.5;
+	
 	Connection(){}
 	Connection(Node bs, Node ue)
 	{
@@ -40,7 +44,13 @@ public class Connection
 	
 	public void setSINR(double totalSignal)
 	{
-		this.SINR = this.getSignal() - totalSignal - N0;
+		this.SINR = 2*this.getSignal() - totalSignal - N0;
+	}
+	
+	public double dataRate(RB rb)
+	{
+		this.setSINR(rb.getTotalSignal(this.ue));
+		return (this.efficiency()*this.SC*this.SY)/this.T;
 	}
 	
 	public double efficiency()

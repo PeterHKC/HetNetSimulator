@@ -14,8 +14,9 @@ public class Simulator
 	
 	Simulator(){}
 	
-	public void init()
+	public void run()
 	{
+		//initialize BS, UE, RB
 		for(int i  = 0; i < BSNumber; i++)
 		{
 			BS bs = new BS();
@@ -33,8 +34,21 @@ public class Simulator
 			RB rb = new RB();
 			this.rbList.add(rb);
 		}
+		
+		//set user association. In other word, decide which bs will be assigned to which ue
 		this.setUserAssociation();
-		System.out.println(this.connList.get(0).dataRate(this.rbList.get(0)));
+		
+		//print every connection's data rate
+		for(Connection c : connList)
+		{
+			c.ue.print();
+			System.out.println(c.dataRate(rbList.get(0)));
+		}
+	}
+	
+	public void setRBAllocation()
+	{
+		
 	}
 	
 	public void setUserAssociation()
@@ -51,7 +65,7 @@ public class Simulator
 	{
 		//System.out.println("fuck");
 		Simulator si = new Simulator();
-		si.init();
+		si.run();
 		
 	}
 }
