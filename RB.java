@@ -32,11 +32,9 @@ public class RB
 		for(int i = 0; i < this.bsList.size(); i++)
 		{
 			Connection conn = new Connection(this.bsList.get(i),ue);
-			t = t + conn.getSignal();
+			t = t + Math.exp(conn.getSignal());
 		}
-		return t;
+		return Math.log(t);
 	}
-	
-	
 }
 

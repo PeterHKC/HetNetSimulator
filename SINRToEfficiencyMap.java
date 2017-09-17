@@ -5,7 +5,7 @@ import mySimulator.*;
 
 public class SINRToEfficiencyMap
 {
-	public ArrayList<Double> efficiencyList = new ArrayList<Double>();
+	public HashMap<Double,Double> efficiencyMap = new HashMap<Double,Double>();
 	
 	SINRToEfficiencyMap()
 	{
@@ -36,8 +36,7 @@ public class SINRToEfficiencyMap
 		
 		for(int i = 1; i < thresholdArray.length; i++)
 		{
-			this.efficiencyList.add(Double.parseDouble(thresholdArray[i]));
-			this.efficiencyList.add(Double.parseDouble(efficiencyArray[i]));
+			this.efficiencyMap.put(Double.parseDouble(thresholdArray[i]),Double.parseDouble(efficiencyArray[i]));
 		}
 			
 	}

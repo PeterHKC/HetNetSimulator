@@ -26,6 +26,7 @@ public class Simulator
 		for(int i  = 0; i < UENumber; i++)
 		{
 			UE ue = new UE(i);
+			ue.setXY(Math.random()*100,Math.random()*100);
 			this.ueList.add(ue);
 		}
 		
@@ -42,7 +43,16 @@ public class Simulator
 		for(Connection c : connList)
 		{
 			c.ue.print();
-			System.out.println(c.dataRate(rbList.get(0)));
+			System.out.print("data rate:");
+			System.out.println(c.dataRate(rbList.get(0).getTotalSignal(c.ue)));
+			System.out.print("interference signal: ");
+			System.out.println(rbList.get(0).getTotalSignal(c.ue));
+			System.out.print("signal: ");
+			System.out.println(c.getSignal());
+			System.out.print("sinr: ");
+			System.out.println(c.SINR);
+			System.out.print("efficiency: ");
+			System.out.println(c.efficiency());
 		}
 	}
 	
@@ -66,6 +76,5 @@ public class Simulator
 		//System.out.println("fuck");
 		Simulator si = new Simulator();
 		si.run();
-		
 	}
 }

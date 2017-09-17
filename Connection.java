@@ -9,7 +9,7 @@ public class Connection
 	public double dis;
 	
 	public double pathLoss;
-	public double N0 = 9;
+	public double N0 = 0;
 	public double SINR;
 	
 	public double SC = 12;
@@ -39,49 +39,48 @@ public class Connection
 	
 	public double getSignal()
 	{
-		return this.bs.transmitPower + this.bs.antennaGain - this.pathLoss;
+		return this.bs.transmitPower + this.bs.antennaGain + this.pathLoss;
 	}
 	
-	public void setSINR(double totalSignal)
-	{
-		this.SINR = 2*this.getSignal() - totalSignal - N0;
-	}
 	
-	public double dataRate(RB rb)
+	public double dataRate(double totalSignal)
 	{
-		this.setSINR(rb.getTotalSignal(this.ue));
+		this.SINR = this.getSignal() - totalSignal - N0;
+		
 		return (this.efficiency()*this.SC*this.SY)/this.T;
 	}
 	
 	public double efficiency()
 	{
-		double r = 0.0;
+		double r = 1000.0, res = 0.0;
 		double omit = this.SINR;
 		
 		try
 		{
-			SINRToEfficiencyMap efflist = new SINRToEfficiencyMap();
-			boolean state = false;
-			double dis = Math.abs(omit - efflist.efficiencyList.get(0));
-			
-			for(int i = 2; i < efflist.efficiencyList.size(); i = i + 2)
+			SINRToEfficiencyMap effMap = new SINRToEfficiencyMap();
+			HashMap<Double,Double> efficiencyMap = effMap.efficiencyMap;
+			for(double k : efficiencyMap.keySet())
 			{
-				if(dis > (omit - efflist.efficiencyList.get(i)))
-					state = true;
-				else if ((omit - efflist.efficiencyList.get(i)) == efflist.efficiencyList.get(i))
-					return efflist.efficiencyList.get(i);
-				else if (state == true)
-					return efflist.efficiencyList.get(i-2);
-				dis = Math.abs(omit - efflist.efficiencyList.get(i));
-				//System.out.println("..."+String.valueOf(i));
+				if(omit > k && omit - k < r)
+				{
+					r = omit - k;
+					res = k;
+				}
+				else if(omit < -6.5)
+				{
+					return efficiencyMap.get(-6.5);
+				}
 			}
-			return efflist.efficiencyList.get(efflist.efficiencyList.size()-1);
+			
+			return efficiencyMap.get(res);
+			
 		}
 		catch (Exception ex)
 		{
 			System.out.println(ex);
 			System.out.println("IOException: SINR threshold table");
+			return -1;
 		}
-		return -1;
+		
 	}
 }
