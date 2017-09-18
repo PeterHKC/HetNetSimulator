@@ -11,9 +11,10 @@ public class Node
 	public double transmitPower;
 	public double antennaGain;
 	
-	Node(){}
+	Node(){this.id = this.hashCode();}
 	Node(double x, double y)
 	{
+		this.id = this.hashCode();
 		this.x = x;
 		this.y = y;
 	}
@@ -26,7 +27,6 @@ public class Node
 	
 	public void print()
 	{
-		this.id = this.hashCode();
 		System.out.print("node: "+Integer.toHexString(this.hashCode())+" in ("+String.valueOf(this.x)+", "+String.valueOf(this.y)+")\t");
 	}
 }

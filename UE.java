@@ -15,7 +15,12 @@ public class UE extends Node
 		super.y = 1.0+id;
 		super.id = id;
 	}
-	
+	UE(UE ue, double power)
+	{
+		super.x = ue.x;
+		super.y = ue.y;
+		this.power = power;
+	}
 	public void setPower(double power)
 	{
 		this.power = power;

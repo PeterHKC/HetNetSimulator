@@ -27,7 +27,7 @@ public class Connection
 	private double pathLossModel(double d)
 	{
 		// km
-		return 140.7 + 36.7*Math.log(d);
+		return 140.7 + 37.6*Math.log(d);
 	}
 	
 	public double getDistance()
@@ -39,7 +39,7 @@ public class Connection
 	
 	public double getSignal()
 	{
-		return this.bs.transmitPower + this.bs.antennaGain + this.pathLoss;
+		return this.ue.power + this.bs.antennaGain - this.pathLoss;
 	}
 	
 	

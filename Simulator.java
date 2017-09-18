@@ -49,10 +49,14 @@ public class Simulator
 			System.out.println(rbList.get(0).getTotalSignal(c.ue));
 			System.out.print("signal: ");
 			System.out.println(c.getSignal());
+			System.out.print("path loss: ");
+			System.out.println(c.pathLoss);
 			System.out.print("sinr: ");
 			System.out.println(c.SINR);
 			System.out.print("efficiency: ");
 			System.out.println(c.efficiency());
+			System.out.print("power: ");
+			System.out.println(c.ue.power);
 		}
 	}
 	

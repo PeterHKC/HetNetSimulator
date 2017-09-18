@@ -4,6 +4,8 @@ import mySimulator.*;
 
 public class RB
 {
+	public double activePower = 35.2;
+	
 	//ue, conn
 	public HashMap<UE, Connection> connMap = new HashMap<UE,Connection>();
 	public ArrayList<BS> bsList = new ArrayList<BS>();
@@ -23,23 +25,28 @@ public class RB
 		for(int i = 0; i < conn.size(); i++)
 		{
 			this.connMap.put(conn.get(i).ue, conn.get(i));
-			this.bsList.add(conn.get(i).bs);
+			if(!bsList.contains(conn.get(i).bs))
+				this.bsList.add(conn.get(i).bs);
 			this.totalDistance = this.totalDistance + conn.get(i).getDistance();
 		}
 		for(Connection c : conn)
 		{
-			c.ue.setPower(c.bs.transmitPower*c.getDistance()/this.totalDistance);
+			c.ue.setPower(c.bs.transmitPower*(c.getDistance()/this.totalDistance));
 		}
 	}
 	
 	public double getTotalSignal(UE ue)
 	{
+		
 		double t = 0.0;
 		for(int i = 0; i < this.bsList.size(); i++)
 		{
-			Connection conn = new Connection(this.bsList.get(i),ue);
+			UE temp = new UE(ue, this.bsList.get(i).transmitPower-ue.power);
+			temp.power = this.bsList.get(i).transmitPower;
+			Connection conn = new Connection(this.bsList.get(i),temp);
 			t = t + Math.exp(conn.getSignal());
 		}
+		
 		return Math.log(t);
 	}
 }
