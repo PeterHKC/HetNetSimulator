@@ -4,8 +4,8 @@ import mySimulator.*;
 
 public class Connection
 {
-	public Node bs;
-	public Node ue;
+	public BS bs;
+	public UE ue;
 	public double dis;
 	
 	public double pathLoss;
@@ -17,7 +17,7 @@ public class Connection
 	public double T = 0.5;
 	
 	Connection(){}
-	Connection(Node bs, Node ue)
+	Connection(BS bs, UE ue)
 	{
 		this.bs = bs;
 		this.ue = ue;
