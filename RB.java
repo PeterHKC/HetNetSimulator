@@ -31,7 +31,8 @@ public class RB
 		}
 		for(Connection c : conn)
 		{
-			c.ue.setPower(c.bs.transmitPower*(c.getDistance()/this.totalDistance));
+			//c.ue.setPower(35.2);
+			c.ue.setPower(10*Math.log10(Math.pow(10,c.bs.transmitPower/10))*(c.getDistance()/this.totalDistance));
 		}
 	}
 	
@@ -44,10 +45,10 @@ public class RB
 			UE temp = new UE(ue, this.bsList.get(i).transmitPower-ue.power);
 			temp.power = this.bsList.get(i).transmitPower;
 			Connection conn = new Connection(this.bsList.get(i),temp);
-			t = t + Math.exp(conn.getSignal());
+			t = t + Math.pow(10,conn.getSignal()/10);
 		}
 		
-		return Math.log(t);
+		return Math.log10(t)*10;
 	}
 }
 

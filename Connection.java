@@ -13,10 +13,11 @@ public class Connection
 	public double SINR;
 	
 	public double SC = 12;
-	public double SY = 7;
-	public double T = 0.5;
+	public double SY = 14;
+	public double T = 0.001;
 	
 	Connection(){}
+	
 	Connection(BS bs, UE ue)
 	{
 		this.bs = bs;
@@ -27,7 +28,7 @@ public class Connection
 	private double pathLossModel(double d)
 	{
 		// km
-		return 140.7 + 37.6*Math.log(d);
+		return 128.7 + 37.6*Math.log10(d);
 	}
 	
 	public double getDistance()
@@ -39,15 +40,14 @@ public class Connection
 	
 	public double getSignal()
 	{
-		return this.ue.power + this.bs.antennaGain - this.pathLoss;
+		return 10*Math.log10(Math.pow(10,(this.ue.power + this.bs.antennaGain)/10) - this.pathLoss);
 	}
-	
 	
 	public double dataRate(double totalSignal)
 	{
-		this.SINR = this.getSignal() - totalSignal - N0;
+		this.SINR = 2*this.getSignal() - totalSignal - N0;
 		
-		return (this.efficiency()*this.SC*this.SY)/this.T;
+		return (this.efficiency()*this.SC*this.SY)/this.T/1024;
 	}
 	
 	public double efficiency()

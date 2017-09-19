@@ -8,8 +8,8 @@ public class BS extends Node
 	
 	BS()
 	{
-		super.x = 10;
-		super.y = 10;
+		super.x = 0;
+		super.y = 0;
 		super.transmitPower = 46;
 		super.antennaGain = 14;
 	}

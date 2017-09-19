@@ -26,7 +26,8 @@ public class Simulator
 		for(int i  = 0; i < UENumber; i++)
 		{
 			UE ue = new UE(i);
-			ue.setXY(Math.random()*100,Math.random()*100);
+			ue.setXY(Math.random()*250+45,Math.random()*250+45);
+			//ue.setXY(45,0);
 			this.ueList.add(ue);
 		}
 		
@@ -43,19 +44,21 @@ public class Simulator
 		for(Connection c : connList)
 		{
 			c.ue.print();
-			System.out.print("data rate:");
+			System.out.print("\ndata rate Kbps: ");
 			System.out.println(c.dataRate(rbList.get(0).getTotalSignal(c.ue)));
-			System.out.print("interference signal: ");
+			System.out.print("bs to ue meter: ");
+			System.out.println(c.getDistance());
+			System.out.print("all signal dB: ");
 			System.out.println(rbList.get(0).getTotalSignal(c.ue));
-			System.out.print("signal: ");
+			System.out.print("signal dB: ");
 			System.out.println(c.getSignal());
-			System.out.print("path loss: ");
+			System.out.print("path loss dB: ");
 			System.out.println(c.pathLoss);
-			System.out.print("sinr: ");
+			System.out.print("sinr dB: ");
 			System.out.println(c.SINR);
-			System.out.print("efficiency: ");
+			System.out.print("efficiency bits/symbol: ");
 			System.out.println(c.efficiency());
-			System.out.print("power: ");
+			System.out.print("transmit power dBm: ");
 			System.out.println(c.ue.power);
 		}
 	}
