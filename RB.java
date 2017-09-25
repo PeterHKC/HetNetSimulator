@@ -1,6 +1,5 @@
 package mySimulator;
 import java.util.*;
-import mySimulator.*;
 
 public class RB
 {
@@ -15,6 +14,7 @@ public class RB
 	
 	public void add(Connection conn)
 	{
+		conn.ue.setPower(35.2);
 		this.connMap.put(conn.ue, conn);
 		this.bsList.add(conn.bs);
 		this.totalDistance = this.totalDistance + conn.getDistance();
@@ -31,8 +31,8 @@ public class RB
 		}
 		for(Connection c : conn)
 		{
-			//c.ue.setPower(35.2);
-			c.ue.setPower(10*Math.log10(Math.pow(10,c.bs.transmitPower/10))*(c.getDistance()/this.totalDistance));
+			c.ue.setPower(35.2);
+			//c.ue.setPower(10*Math.log10(Math.pow(10,c.bs.transmitPower/10))*(c.getDistance()/this.totalDistance));
 		}
 	}
 	
@@ -42,8 +42,8 @@ public class RB
 		double t = 0.0;
 		for(int i = 0; i < this.bsList.size(); i++)
 		{
-			UE temp = new UE(ue, this.bsList.get(i).transmitPower-ue.power);
-			temp.power = this.bsList.get(i).transmitPower;
+			//UE temp = new UE(ue, this.bsList.get(i).transmitPower-ue.power);
+			UE temp = new UE(ue, this.activePower);
 			Connection conn = new Connection(this.bsList.get(i),temp);
 			t = t + Math.pow(10,conn.getSignal()/10);
 		}

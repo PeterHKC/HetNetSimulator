@@ -1,6 +1,5 @@
 package mySimulator;
 import java.util.*;
-import mySimulator.*;
 
 public class Connection
 {
@@ -40,12 +39,12 @@ public class Connection
 	
 	public double getSignal()
 	{
-		return 10*Math.log10(Math.pow(10,(this.ue.power + this.bs.antennaGain)/10) - this.pathLoss);
+		return 10*Math.log10(Math.pow(10,(this.bs.transmitPower + this.bs.antennaGain)/10) - this.pathLoss);
 	}
 	
 	public double dataRate(double totalSignal)
 	{
-		this.SINR = 2*this.getSignal() - totalSignal - N0;
+		this.SINR = Math.pow(10,this.getSignal()/10)+Math.pow(10,this.getSignal()/10) - Math.pow(10,totalSignal/10) - N0;
 		
 		return (this.efficiency()*this.SC*this.SY)/this.T/1024;
 	}

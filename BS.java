@@ -1,17 +1,16 @@
 package mySimulator;
 import java.util.*;
-import mySimulator.*;
 
 public class BS extends Node
 {
+	public double transmitPower = 35.2;
+	public double antennaGain = 14;
 	ArrayList<Node> ueList = new ArrayList<Node>();
 	
 	BS()
 	{
 		super.x = 0;
 		super.y = 0;
-		super.transmitPower = 46;
-		super.antennaGain = 14;
 	}
 	
 	public void addUE(ArrayList<Node> ueList)

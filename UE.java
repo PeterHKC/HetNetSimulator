@@ -1,6 +1,5 @@
 package mySimulator;
 import java.util.*;
-import mySimulator.*;
 
 public class UE extends Node
 {

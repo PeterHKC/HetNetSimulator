@@ -1,7 +1,6 @@
 package mySimulator;
 import java.util.*;
 import java.io.*;
-import mySimulator.*;
 
 public class SINRToEfficiencyMap
 {
@@ -15,6 +14,7 @@ public class SINRToEfficiencyMap
 		try
 		{
 			FileReader fr = new FileReader(filename);
+			@SuppressWarnings("resource")
 			BufferedReader br = new BufferedReader(fr);
 			while(br.ready())
 			{

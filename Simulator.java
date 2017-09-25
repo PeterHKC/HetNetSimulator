@@ -1,11 +1,10 @@
 package mySimulator;
 import java.util.*;
-import mySimulator.*;
 
 public class Simulator
 {
-	public final int UENumber = 3;
-	public final int BSNumber = 1;
+	public final int UENumber = 2;
+	public final int BSNumber = 2;
 	public final int RBNumber = 1;
 	ArrayList<BS> bsList = new ArrayList<BS>();
 	ArrayList<RB> rbList = new ArrayList<RB>();
@@ -20,6 +19,7 @@ public class Simulator
 		for(int i  = 0; i < BSNumber; i++)
 		{
 			BS bs = new BS();
+			bs.setXY(Math.random()*250+45,Math.random()*250+45);
 			this.bsList.add(bs);
 		}
 		
@@ -44,7 +44,7 @@ public class Simulator
 		for(Connection c : connList)
 		{
 			c.ue.print();
-			System.out.print("\ndata rate Kbps: ");
+			System.out.print("data rate Kbps: ");
 			System.out.println(c.dataRate(rbList.get(0).getTotalSignal(c.ue)));
 			System.out.print("bs to ue meter: ");
 			System.out.println(c.getDistance());
@@ -52,14 +52,14 @@ public class Simulator
 			System.out.println(rbList.get(0).getTotalSignal(c.ue));
 			System.out.print("signal dB: ");
 			System.out.println(c.getSignal());
-			System.out.print("path loss dB: ");
-			System.out.println(c.pathLoss);
+//			System.out.print("path loss dB: ");
+//			System.out.println(c.pathLoss);
 			System.out.print("sinr dB: ");
 			System.out.println(c.SINR);
-			System.out.print("efficiency bits/symbol: ");
-			System.out.println(c.efficiency());
-			System.out.print("transmit power dBm: ");
-			System.out.println(c.ue.power);
+//			System.out.print("efficiency bits/symbol: ");
+//			System.out.println(c.efficiency());
+//			System.out.print("transmit power dBm: ");
+//			System.out.println(c.ue.power);
 		}
 	}
 	
@@ -72,10 +72,11 @@ public class Simulator
 	{
 		for(int i = 0; i < this.ueList.size(); i++)
 		{
-			Connection conn = new Connection(this.bsList.get(0), this.ueList.get(i));
+			Connection conn = new Connection(this.bsList.get(i), this.ueList.get(i));
 			this.connList.add(conn);
 		}
-		this.rbList.get(0).add(this.connList);
+		for(int i = 0; i < this.connList.size(); i++)
+			this.rbList.get(0).add(this.connList);
 	}
 	
 	public static void main(String[] arg) throws Exception
