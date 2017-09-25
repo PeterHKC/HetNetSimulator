@@ -3,8 +3,8 @@ import java.util.*;
 
 public class Simulator
 {
-	public final int UENumber = 2;
-	public final int BSNumber = 2;
+	public final int UENumber = 4;
+	public final int BSNumber = 4;
 	public final int RBNumber = 1;
 	ArrayList<BS> bsList = new ArrayList<BS>();
 	ArrayList<RB> rbList = new ArrayList<RB>();
@@ -15,18 +15,23 @@ public class Simulator
 	
 	public void run()
 	{
+		double x=50, y=50;
 		//initialize BS, UE, RB
 		for(int i  = 0; i < BSNumber; i++)
 		{
 			BS bs = new BS();
-			bs.setXY(Math.random()*250+45,Math.random()*250+45);
+			if(i%2 == 1)
+				bs.setXY(x*=-1, y);
+			else
+				bs.setXY(x, y*=-1);
 			this.bsList.add(bs);
+			//System.out.println(String.valueOf(x)+"\t"+String.valueOf(y));
 		}
 		
 		for(int i  = 0; i < UENumber; i++)
 		{
 			UE ue = new UE(i);
-			ue.setXY(Math.random()*250+45,Math.random()*250+45);
+			ue.setXY(Math.random()*500-250,Math.random()*500-250);
 			//ue.setXY(45,0);
 			this.ueList.add(ue);
 		}
@@ -52,12 +57,12 @@ public class Simulator
 			System.out.println(rbList.get(0).getTotalSignal(c.ue));
 			System.out.print("signal dB: ");
 			System.out.println(c.getSignal());
-//			System.out.print("path loss dB: ");
-//			System.out.println(c.pathLoss);
+			System.out.print("path loss dB: ");
+			System.out.println(c.pathLoss);
 			System.out.print("sinr dB: ");
 			System.out.println(c.SINR);
-//			System.out.print("efficiency bits/symbol: ");
-//			System.out.println(c.efficiency());
+			System.out.print("efficiency bits/symbol: ");
+			System.out.println(c.efficiency());
 //			System.out.print("transmit power dBm: ");
 //			System.out.println(c.ue.power);
 		}

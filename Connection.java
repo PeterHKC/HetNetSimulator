@@ -39,12 +39,13 @@ public class Connection
 	
 	public double getSignal()
 	{
-		return 10*Math.log10(Math.pow(10,(this.bs.transmitPower + this.bs.antennaGain)/10) - this.pathLoss);
+		return this.bs.antennaGain+this.bs.transmitPower-this.pathLoss;
+		//return 10*Math.log10(Math.pow(10,(this.bs.transmitPower + this.bs.antennaGain)/10)-Math.pow(10,this.pathLoss/10));
 	}
 	
 	public double dataRate(double totalSignal)
 	{
-		this.SINR = Math.pow(10,this.getSignal()/10)+Math.pow(10,this.getSignal()/10) - Math.pow(10,totalSignal/10) - N0;
+		this.SINR = this.getSignal()-10*Math.log10(Math.pow(10,totalSignal/10)-Math.pow(10,this.getSignal()/10));
 		
 		return (this.efficiency()*this.SC*this.SY)/this.T/1024;
 	}
@@ -65,10 +66,16 @@ public class Connection
 					r = omit - k;
 					res = k;
 				}
-				else if(omit < -6.5)
+				else if(omit <= -6.5)
 				{
 					return efficiencyMap.get(-6.5);
 				}
+				else if(omit >= 17.6)
+				{
+					return efficiencyMap.get(17.6);
+				}
+				else if(omit == k)
+					return efficiencyMap.get(k);
 			}
 			
 			return efficiencyMap.get(res);
