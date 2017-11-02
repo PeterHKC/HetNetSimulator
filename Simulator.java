@@ -1,5 +1,6 @@
 package mySimulator;
 import java.util.*;
+import java.io.*;
 
 public class Simulator
 {
@@ -28,7 +29,7 @@ public class Simulator
 			//System.out.println(String.valueOf(x)+"\t"+String.valueOf(y));
 		}
 		
-		for(int i  = 0; i < UENumber; i++)
+		for(int i  = 0;i < UENumber; i++)
 		{
 			UE ue = new UE(i);
 			ue.setXY(Math.random()*500-250,Math.random()*500-250);
@@ -68,6 +69,37 @@ public class Simulator
 		}
 	}
 	
+	public void initial()
+	{
+		String filename = "config1.csv";
+		String line = "";
+		try
+		{
+			FileReader fr = new FileReader(filename);
+			@SuppressWarnings("resource")
+			BufferedReader br = new BufferedReader(fr);
+			while(br.ready())
+			{
+				line = br.readLine();
+				if(line.contains("macro"))
+				{
+					String[] str = line.spilt(",");
+					
+					System.out.println(line);
+				}
+				else if(line.contains("pico"))
+				{
+					String[] str = line.spilt(",");
+					System.out.println();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			System.out.println("IOException: in "+filename);
+		}
+	}
+	
 	public void setRBAllocation()
 	{
 		
@@ -88,6 +120,7 @@ public class Simulator
 	{
 		//System.out.println("fuck");
 		Simulator si = new Simulator();
-		si.run();
+		//si.run();
+		si.initial();
 	}
 }
