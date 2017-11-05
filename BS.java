@@ -1,25 +1,24 @@
-package mySimulator;
-import java.util.*;
+package Simulator;
 
-public class BS extends Node
-{
-	public double transmitPower = 46;
-	public double antennaGain = 14;
-	ArrayList<Node> ueList = new ArrayList<Node>();
+public class BS extends Node{
+
+	private dB transmit_power = null;
+	private dB antenna_gain = null;
+	private double path_loss_para1;
+	private double path_loss_para2;
 	
-	BS()
+	BS(){}
+	/*
+	 * input transmit_power and antenna_gain
+	 */
+	BS(double tp, double ag, double p1, double p2)
 	{
-		super.x = 0;
-		super.y = 0;
+		this.transmit_power = new dB(tp);
+		this.antenna_gain = new dB(ag);
+		path_loss_para1 = p1;
+		path_loss_para2 = p2;
 	}
-	BS(double x, double y)
-	{
-		super.x = x;
-		super.y = y;
-	}
-	
-	public void addUE(ArrayList<Node> ueList)
-	{
-		this.ueList.addAll(ueList);
-	}
+	public dB getTransmitPower() {return this.transmit_power;}
+	public dB getAntennaGain() {return this.antenna_gain;}
+	public double pathLossModel(double distance) {return this.path_loss_para1 + this.path_loss_para2*Math.log10(distance);}
 }

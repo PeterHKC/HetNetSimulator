@@ -1,30 +1,37 @@
-package mySimulator;
+package Simulator;
 
-public class Node
-{
-	public int id;
-	public double x;
-	public double y;
-	public String name;
+public class Node {
+	protected String name = "";
+	protected double x;
+	protected double y;
 	
-	Node(){this.id = this.hashCode();}
+	Node(){}
+	Node(String name)
+	{
+		this.name = name;
+	}
 	Node(double x, double y)
 	{
-		this.id = this.hashCode();
 		this.x = x;
 		this.y = y;
 	}
 	
-	public void setXY(double x, double y)
+	Node(String name, double x, double y)
 	{
+		this.name = name;
 		this.x = x;
 		this.y = y;
 	}
 	
-	public void print()
+	public static double getDistance(Node n1, Node n2)
 	{
-		for(int i = 0; i < 30; i++)
-		System.out.print("-");
-		System.out.println("\nnode: "+this.name+" in ("+String.valueOf(this.x)+", "+String.valueOf(this.y)+")\t");
+		return Math.sqrt(Math.pow(n1.x-n2.x, 2) + Math.pow(n1.y-n2.y, 2));
 	}
+	
+	public String getName() {return this.name;}
+	public void setName(String name) {this.name = name;}
+	
+	void setXY(double x, double y) {this.x = x; this.y = y;}
+	double getX() {return this.x;}
+	double getY() {return this.y;}
 }

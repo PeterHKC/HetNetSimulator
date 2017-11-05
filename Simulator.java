@@ -1,82 +1,121 @@
-package mySimulator;
-import java.util.*;
-import java.io.*;
+package Simulator;
 
-public class Simulator
-{
-	public final int UENumber = 2;
-	public final int BSNumber = 2;
-	public final int RBNumber = 1;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+
+public class Simulator {
+
+	int[] a = new int[30];
+	int[] b = new int[30];
 	ArrayList<BS> bsList = new ArrayList<BS>();
 	ArrayList<RB> rbList = new ArrayList<RB>();
 	ArrayList<UE> ueList = new ArrayList<UE>();
-	ArrayList<Connection> connList = new ArrayList<Connection>();
+	public int UENumber;
+	public int BSNumber;
+	public int RBNumber = 12;
 	
 	Simulator(){}
 	
 	public void run()
 	{
+		this.initial("config1.csv");
+		this.setBestCQI();
 		
-		double x=50, y=50;
-		//initialize BS, UE, RB
-		for(int i  = 0; i < BSNumber; i++)
+		for(RB rb : this.rbList)
 		{
-			BS bs = new BS();
-			if(i%2 == 1)
-				bs.setXY(x*=-1, y);
-			else
-				bs.setXY(x, y*=-1);
-			this.bsList.add(bs);
-			//System.out.println(String.valueOf(x)+"\t"+String.valueOf(y));
+			for(UE ue : rb.getUEList())
+			{
+				ue.setRSSI(rb.RSSI);
+			}
 		}
 		
-		for(int i  = 0;i < UENumber; i++)
+		for(UE ue : this.ueList)
 		{
-			UE ue = new UE(i);
-			ue.setXY(Math.random()*500-250,Math.random()*500-250);
-			//ue.setXY(45,0);
-			this.ueList.add(ue);
+			ue.print();
+		}
+	}
+	public void setBestCQI()
+	{
+		for(UE ue : this.ueList)
+		{
+			double minDistance = 100000;
+			int temp = 0;
+			for(int i = 0; i < this.bsList.size(); i++)
+			{
+				if(Node.getDistance(ue, this.bsList.get(i)) < minDistance)
+				{
+					temp = i;
+					minDistance = Node.getDistance(ue, this.bsList.get(i));
+				}
+			}
+			
+			ue.addBS(this.bsList.get(temp));
 		}
 		
-		for(int i  = 0; i < RBNumber; i++)
+		for(UE ue : this.ueList)
 		{
-			RB rb = new RB();
-			this.rbList.add(rb);
+			double minRSSI = 10000;
+			int temp = 0;
+			for(int i = 0; i < this.rbList.size(); i++)
+			{
+				if(this.rbList.get(i).RSSI.getdB() == 0)
+				{
+					this.rbList.get(i).addUE(ue);
+					break;
+				}
+				else if(this.rbList.get(i).RSSI.getdB() < minRSSI)
+				{
+					temp = i;
+					minRSSI = this.rbList.get(i).RSSI.getdB();
+				}
+			}
+			this.rbList.get(temp).addUE(ue);
 		}
+	}
+	
+	public void sampleRun()
+	{
+		/*
+		 * create BS
+		 * arg1: transmit power (in dB)
+		 * arg2: antenna gain (in dB)
+		 * arg3: path loss parameter (p1)
+		 * arg4: path loss parameter (p2)
+		 * note: path loss model:  p1 + p2 * log10(d) where d is the distance between UE and BS
+		 */
+		BS bs = new BS(35.2,14,128.7,37.6);
+		bs.setXY(0, 0);
 		
-		String filename = "config1.csv";
-		//this.initial(filename);
-		//this.setBestCQI();
+		/*
+		 * create UE
+		 * 1.construct
+		 * 2. set X, Y position
+		 * 3. select BS
+		 */
+		UE ue1 = new UE();
+		UE ue2 = new UE();
+		ue1.setXY(100, 100);
+		ue2.setXY(13, 100);
+		ue1.addBS(bs);
+		ue2.addBS(bs);
 		
-		//set user association. In other word, decide which bs will be assigned to which ue
-		this.setUserAssociation();
+		/*
+		 * create RB
+		 * 1.select UE to be assigned
+		 */
+		RB rb = new RB();
+		rb.addUE(ue1);
+		rb.addUE(ue2);
 		
-		//set RB allocation, to manage which RB will be assigned to which connection 
-		//this.setRBAllocation();
-		
-		//print every connection's data rate
-		
-		for(Connection c : connList)
-		{
-			c.ue.print();
-			System.out.print("data rate Kbps: ");
-			System.out.println(c.dataRate(rbList.get(0).getTotalSignal(c.ue)));
-			System.out.print("bs to ue meter: ");
-			System.out.println(c.getDistance());
-			System.out.print("all signal dB: ");
-			System.out.println(rbList.get(0).getTotalSignal(c.ue));
-			System.out.print("signal dB: ");
-			System.out.println(c.getSignal());
-			System.out.print("path loss dB: ");
-			System.out.println(c.pathLoss);
-			System.out.print("sinr dB: ");
-			System.out.println(c.SINR);
-			System.out.print("efficiency bits/symbol: ");
-			System.out.println(c.efficiency());
-//			System.out.print("transmit power dBm: ");
-//			System.out.println(c.ue.power);
-		}
-		
+		/*
+		 * setting RB
+		 * note: you must set RSSI for each UE before calculate UE's throughput and so on
+		 */
+		ue1.setRSSI(rb.RSSI);
+		ue1.print();
+		ue2.setRSSI(rb.RSSI);
+		ue2.print();
 	}
 	
 	public void initial(String filename)
@@ -84,6 +123,9 @@ public class Simulator
 		String line = "";
 		try
 		{
+			this.UENumber=0;
+			this.BSNumber=0;
+			this.RBNumber=12;
 			FileReader fr = new FileReader(filename);
 			@SuppressWarnings("resource")
 			BufferedReader br = new BufferedReader(fr);
@@ -93,30 +135,33 @@ public class Simulator
 				if(line.contains("macro"))
 				{
 					String[] str = line.split(",");
-					BS bs = new BS(Double.parseDouble(str[1]),Double.parseDouble(str[2]));
+					BS bs = new BS(35.2, 14, 128.1, 35.2);
+					bs.setXY(Double.parseDouble(str[1]),Double.parseDouble(str[2]));
 					bs.name = str[0];
 					this.bsList.add(bs);
+					this.BSNumber++;
 				}
 				else if(line.contains("pico"))
 				{
 					String[] str = line.split(",");
-					BS bs = new BS(Double.parseDouble(str[1]),Double.parseDouble(str[2]));
-					bs.name = str[0];
-					bs.transmitPower = 35;
-					bs.antennaGain = 5;
+					BS bs = new BS(24.2, 5, 140.7, 36.7);
+					bs.setXY(Double.parseDouble(str[1]),Double.parseDouble(str[2]));
+					bs.setName(str[0]);
 					this.bsList.add(bs);
+					this.BSNumber++;
 				}
 				else if(line.contains("ue"))
 				{
 					String[] str = line.split(",");
 					UE ue = new UE();
-					ue.name = str[0];
+					ue.setName(str[0]);
 					ue.setXY(Double.parseDouble(str[1]),Double.parseDouble(str[2]));
 					this.ueList.add(ue);
+					this.UENumber++;
 				}
 			}
 			
-			for(int i  = 0; i < UENumber; i++)
+			for(int i  = 0; i < RBNumber; i++)
 			{
 				RB rb = new RB();
 				this.rbList.add(rb);
@@ -129,90 +174,10 @@ public class Simulator
 		}
 		
 	}
-	public void setRBAllocation()
-	{
-		
-	}
-	public void setBestCQI()
-	{
-		for(UE ue : this.ueList)
-		{
-			Connection c = null;
-			double minDist = 100000;
-			for(BS bs : this.bsList)
-			{
-				Connection temp = new Connection(bs, ue);
-				if(minDist > temp.getDistance())
-				{
-					c = temp;
-					minDist = temp.getDistance();
-				}
-			}
-			this.connList.add(c);
-		}
-		
-		for(int i = 0; i < this.connList.size(); i++)
-		{
-			this.rbList.get(i).add(this.connList.get(i));
-		}
-		
-		/*
-		for(Connection conn : this.connList)
-		{
-			RB r = null;
-			double minRSSI = 100000;
-			for(RB rb : this.rbList)
-			{
-				if(minRSSI > rb.getTotalSignal(conn.ue))
-				{
-					r = rb;
-					minRSSI = rb.getTotalSignal(conn.ue);
-					if(minRSSI == 0)
-						break;
-				}
-			}
-			r.add(conn);
-		}
-		*/
-	}
 	
-	public void setUserAssociation()
+	public static void main(String[] args)
 	{
-		for(int i = 0; i < this.ueList.size(); i++)
-		{
-			Connection conn = new Connection(this.bsList.get(i), this.ueList.get(i));
-			this.connList.add(conn);
-		}
-		for(int i = 0; i < this.connList.size(); i++)
-			this.rbList.get(0).add(this.connList);
-	}
-	
-	public void genData(String filename)
-	{
-		try
-		{
-			FileWriter fw = new FileWriter(filename);
-			for(int i  = 0 ; i < 60; i++)
-			{
-				fw.write("ue,");
-				fw.write(String.valueOf(Math.random()*680-340));
-				fw.write(",");
-				fw.write(String.valueOf(Math.random()*680-340));
-				fw.write("\n");
-			}
-			fw.close();
-		}
-		catch(Exception ex)
-		{
-			System.out.println("IOException: in "+filename);
-		}
-	}
-	
-	public static void main(String[] arg) throws Exception
-	{
-		//System.out.println("fuck");
 		Simulator si = new Simulator();
 		si.run();
-		//si.initial("config1.csv");
 	}
 }
