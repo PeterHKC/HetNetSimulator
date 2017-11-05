@@ -3,7 +3,7 @@ import java.util.*;
 
 public class RB
 {
-	public double activePower = 35.2;
+	public double activePower;
 	
 	//ue, conn
 	public HashMap<UE, Connection> connMap = new HashMap<UE,Connection>();
@@ -14,7 +14,8 @@ public class RB
 	
 	public void add(Connection conn)
 	{
-		conn.ue.setPower(35.2);
+		this.activePower = Math.log10(Math.pow(10,conn.bs.transmitPower/10)/12)*10;
+		conn.ue.setPower(this.activePower);
 		this.connMap.put(conn.ue, conn);
 		this.bsList.add(conn.bs);
 		this.totalDistance = this.totalDistance + conn.getDistance();
@@ -31,14 +32,17 @@ public class RB
 		}
 		for(Connection c : conn)
 		{
-			c.ue.setPower(35.2);
+			c.ue.setPower(this.activePower);
 			//c.ue.setPower(10*Math.log10(Math.pow(10,c.bs.transmitPower/10))*(c.getDistance()/this.totalDistance));
 		}
 	}
 	
 	public double getTotalSignal(UE ue)
 	{
-		
+		if(this.bsList.size() == 0)
+		{
+			return 0;
+		}
 		double t = 0.0;
 		for(int i = 0; i < this.bsList.size(); i++)
 		{

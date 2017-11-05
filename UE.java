@@ -20,6 +20,7 @@ public class UE extends Node
 		super.y = ue.y;
 		this.power = power;
 	}
+	
 	public void setPower(double power)
 	{
 		this.power = power;

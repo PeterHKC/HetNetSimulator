@@ -5,6 +5,7 @@ public class Node
 	public int id;
 	public double x;
 	public double y;
+	public String name;
 	
 	Node(){this.id = this.hashCode();}
 	Node(double x, double y)
@@ -24,6 +25,6 @@ public class Node
 	{
 		for(int i = 0; i < 30; i++)
 		System.out.print("-");
-		System.out.println("\nnode: "+Integer.toHexString(this.hashCode())+" in ("+String.valueOf(this.x)+", "+String.valueOf(this.y)+")\t");
+		System.out.println("\nnode: "+this.name+" in ("+String.valueOf(this.x)+", "+String.valueOf(this.y)+")\t");
 	}
 }
