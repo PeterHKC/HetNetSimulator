@@ -6,7 +6,7 @@ public class BS extends Node{
 	private dB antenna_gain = null;
 	private double path_loss_para1;
 	private double path_loss_para2;
-	
+	private int service = 0;
 	BS(){}
 	/*
 	 * input transmit_power and antenna_gain
@@ -18,6 +18,8 @@ public class BS extends Node{
 		path_loss_para1 = p1;
 		path_loss_para2 = p2;
 	}
+	public void addService() {this.service++;}
+	public int getService() {return this.service;}
 	public dB getTransmitPower() {return this.transmit_power;}
 	public dB getAntennaGain() {return this.antenna_gain;}
 	public double pathLossModel(double distance) {return this.path_loss_para1 + this.path_loss_para2*Math.log10(distance);}

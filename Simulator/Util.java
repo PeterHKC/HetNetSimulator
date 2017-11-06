@@ -101,10 +101,10 @@ public class Util {
 			FileWriter fw = new FileWriter(filename);
 			for(int i  = 0 ; i < n; i++)
 			{
-				fw.write("ue,");
-				fw.write(String.valueOf(Math.random()*680-340));
+				fw.write("ue"+String.valueOf(i)+",");
+				fw.write(String.valueOf(Math.random()*1200-600));
 				fw.write(",");
-				fw.write(String.valueOf(Math.random()*680-340));
+				fw.write(String.valueOf(Math.random()*1200-600));
 				fw.write("\n");
 			}
 			fw.close();
@@ -113,5 +113,9 @@ public class Util {
 		{
 			System.out.println("IOException: in "+filename);
 		}
+	}
+	public static void main(String[] args)
+	{
+		genUEData("config1.csv", 30);
 	}
 }

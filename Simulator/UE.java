@@ -10,12 +10,23 @@ public class UE extends Node{
 	private dB RSRP = null, RSSI = null, RSRQ = null;
 	private BS bs = null;
 	UE(){}
+	public double pingBS(BS bs)
+	{
+		if(bs.getService() == 12)
+			return 0;
+		double dis = Node.getDistance(this, bs);
+		double pathloss = bs.pathLossModel(dis);
+		dB temp = bs.getAntennaGain().mul(bs.getAntennaGain(), bs.getTransmitPower());
+		dB RSRP = temp.div(temp, pathloss);
+		return RSRP.getdB();
+	}
 	public void addBS(BS bs)
 	{
 		this.distance = Node.getDistance(this, bs);
 		double pathloss = bs.pathLossModel(this.distance);
 		dB temp = bs.getAntennaGain().mul(bs.getAntennaGain(), bs.getTransmitPower());
 		this.RSRP = temp.div(temp, pathloss);
+		bs.addService();
 		this.bs = bs;
 	}
 	
@@ -34,6 +45,8 @@ public class UE extends Node{
 	
 	public void print()
 	{
+		for(int i = 0; i < 50; i++)
+			System.out.print("-");
 		System.out.print("UE: ");
 		System.out.println(this.name);
 		System.out.print("data rate (Kbps): ");
@@ -52,5 +65,8 @@ public class UE extends Node{
 		System.out.println(Util.efficiency(this.RSRQ));
 		System.out.print("BS assgined by: ");
 		System.out.println(this.bs.name);
+		for(int i = 0; i < 50; i++)
+			System.out.print("-");
+		System.out.println("-");
 	}
 }

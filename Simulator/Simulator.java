@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-public class Simulator {
+import GA.GA;
 
-	int[] a = new int[30];
-	int[] b = new int[30];
+public class Simulator extends GA{
+
+	
 	ArrayList<BS> bsList = new ArrayList<BS>();
 	ArrayList<RB> rbList = new ArrayList<RB>();
 	ArrayList<UE> ueList = new ArrayList<UE>();
@@ -15,13 +16,30 @@ public class Simulator {
 	public int BSNumber;
 	public int RBNumber = 12;
 	
-	Simulator(){}
+	Simulator()throws Exception{this.initial("config1.csv");}
 	
 	public void run()
 	{
-		this.initial("config1.csv");
-		this.setBestCQI();
 		
+		this.BestCQI();
+		
+		
+		System.out.print("UE number: ");
+		System.out.println(this.UENumber);
+		System.out.print("BS number: ");
+		System.out.println(this.BSNumber);
+		System.out.print("RB number: ");
+		System.out.println(this.RBNumber);
+		System.out.print("system total throughput: ");
+		System.out.println(this.fitness());
+	}
+	
+	
+	
+	@Override
+	public int fitness()
+	{
+		double totalThroughput = 0;
 		for(RB rb : this.rbList)
 		{
 			for(UE ue : rb.getUEList())
@@ -32,24 +50,40 @@ public class Simulator {
 		
 		for(UE ue : this.ueList)
 		{
-			ue.print();
+			//ue.print();
+			totalThroughput = totalThroughput + ue.getDataRate(ue.getRSSI());
 		}
+		
+		return (int)totalThroughput;
 	}
-	public void setBestCQI()
+	
+	public void bitStringGA(int a[], int b[])
+	{
+		for(int i = 0; i < a.length; i++)
+		{
+			this.ueList.get(i).addBS(this.bsList.get(a[i]));
+		}
+		for(int i = 0; i < b.length; i++)
+		{
+			this.rbList.get(a[i]).addUE(this.ueList.get(i));
+		}
+		
+	}
+	
+	public void BestCQI()
 	{
 		for(UE ue : this.ueList)
 		{
-			double minDistance = 100000;
+			double maxRSRP = 0;
 			int temp = 0;
 			for(int i = 0; i < this.bsList.size(); i++)
 			{
-				if(Node.getDistance(ue, this.bsList.get(i)) < minDistance)
+				if(ue.pingBS(this.bsList.get(i)) > maxRSRP)
 				{
 					temp = i;
-					minDistance = Node.getDistance(ue, this.bsList.get(i));
+					maxRSRP = ue.pingBS(this.bsList.get(i));
 				}
 			}
-			
 			ue.addBS(this.bsList.get(temp));
 		}
 		
@@ -64,7 +98,7 @@ public class Simulator {
 					this.rbList.get(i).addUE(ue);
 					break;
 				}
-				else if(this.rbList.get(i).RSSI.getdB() < minRSSI)
+				else if(this.rbList.get(i).RSSI.getdB() < minRSSI && this.rbList.get(i).getBSList().contains(ue.getBS()) == false)
 				{
 					temp = i;
 					minRSSI = this.rbList.get(i).RSSI.getdB();
@@ -175,7 +209,7 @@ public class Simulator {
 		
 	}
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 		Simulator si = new Simulator();
 		si.run();
