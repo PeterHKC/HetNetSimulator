@@ -23,4 +23,5 @@ public class BS extends Node{
 	public dB getTransmitPower() {return this.transmit_power;}
 	public dB getAntennaGain() {return this.antenna_gain;}
 	public double pathLossModel(double distance) {return this.path_loss_para1 + this.path_loss_para2*Math.log10(distance);}
+	public void reset() {this.service = 0;}
 }

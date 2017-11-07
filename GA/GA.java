@@ -1,6 +1,7 @@
 package GA;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.io.*;
 
 public class GA
 {
@@ -8,17 +9,15 @@ public class GA
 	public int bit_number;
 	public double mutation_rate;
 	public double crossover_rate;
-	public ArrayList<Chromosome> chromosomes = new ArrayList<Chromosome>();
+	public ArrayList<BitString> chromosomes = new ArrayList<BitString>();
 	
 	public GA() throws Exception
-	{
-		/*
+	{/*
 		this.init_number = 10;
 		this.bit_number = 1000;
 		this.crossover_rate = 0.6;
 		this.mutation_rate = 0.01;
-		this.initialization();
-		*/
+		this.initialization();*/
 	}
 	
 	public GA(int init_number, int bit_number, double crossover_rate, double mutation_rate) throws Exception
@@ -39,7 +38,7 @@ public class GA
 		System.out.println("mutation_rate: "+this.mutation_rate);
 		for(int i = 0; i < this.init_number; i++)
 		{
-			this.chromosomes.add(new Chromosome(this.bit_number));
+			this.chromosomes.add(new BitString(this.bit_number));
 		}
 	}
 	
@@ -58,7 +57,7 @@ public class GA
 	
 	public void crossoverGA()
 	{
-		ArrayList<Chromosome> temp = new ArrayList<Chromosome>();
+		ArrayList<BitString> temp = new ArrayList<BitString>();
 		for(int i = 0; i < this.chromosomes.size(); i++)
 		{
 			if(Math.random() < this.crossover_rate)
@@ -69,8 +68,8 @@ public class GA
 				{
 					partner = (int) Math.round(Math.random()*(this.init_number-1));
 				}
-				temp.add(this.chromosomes.get(i).crossover(this.chromosomes.get(partner)));
-				temp.add(this.chromosomes.get(partner).crossover(this.chromosomes.get(i)));
+				temp.add((BitString) this.chromosomes.get(i).crossover(this.chromosomes.get(partner)));
+				temp.add((BitString) this.chromosomes.get(partner).crossover(this.chromosomes.get(i)));
 			}
 		}
 		this.chromosomes.addAll(temp);
@@ -82,11 +81,10 @@ public class GA
 		ArrayList<Integer> values = new ArrayList<Integer>();
 		for(int i = 0; i < this.chromosomes.size(); i ++)
 		{
-			int f = this.fitness(this.chromosomes.get(i));
-			values.add(f);
-			if(min > f)
+			values.add(this.chromosomes.get(i).fitness());
+			if(min > this.chromosomes.get(i).fitness())
 			{
-				min = this.fitness(this.chromosomes.get(i));
+				min = this.chromosomes.get(i).fitness();
 				index = i;
 			}
 		}
@@ -109,9 +107,9 @@ public class GA
 		for(int i = 0; i < this.chromosomes.size(); i++)
 		{
 			if(args.equals("all"))
-				this.print(this.chromosomes.get(i));
+				this.chromosomes.get(i).printChromosome();
 			else
-				System.out.println("Value: "+this.fitness(this.chromosomes.get(i)));
+				System.out.println("Value: "+this.chromosomes.get(i).fitness());
 		}
 		System.out.println("-----size="+this.chromosomes.size()+"-----");
 	}
@@ -119,36 +117,31 @@ public class GA
 	{
 		for(int i = 0; i < this.chromosomes.size(); i++)
 		{
-			System.out.println("Value: "+ this.fitness(this.chromosomes.get(i)));
+			System.out.println("Value: "+this.chromosomes.get(i).fitness());
 		}
 		System.out.println("-----size="+this.chromosomes.size()+"-----");
 	}
 	
 	public void startGA(int iter)
 	{
-		System.out.println("iterations: "+String.valueOf(iter));
+		//this.print("");
+		
+		//int x = this.findMinChromosomes();
+		//this.chromosomes.get(x).printChromosome();
+		//this.chromosomes.get(0).crossover(this.chromosomes.get(1)).printChromosome();
+		
+		
 		for(int i = 0; i < iter; i ++)
 		{
+			//System.out.println("====i="+i+"====");
 			this.crossoverGA();
+			//this.print();
 			this.mutationGA();
+			//this.print();
 			this.selection();
+			
+			//System.out.println("================");
 		}
-	}
-	
-	public void print(Chromosome ch)
-	{
-		for(int i = 0; i < this.bit_number; i++)
-			System.out.print(ch.x[i]);
-		System.out.println("\t"+this.fitness(ch));
-	}
-	
-	public int fitness(Chromosome ch)
-	{
-		int fitness_value = 0;
-		for (int i = 0; i < this.bit_number; i++)
-			fitness_value = ch.x[i] + fitness_value;
-		
-		return fitness_value;
 	}
 	
 	public static void main(String[] args) throws Exception
@@ -164,8 +157,9 @@ public class GA
 		
 		if(args.length == 0)
 		{
-			GA ga = new GA(10,100,0.8,0.05);
-			ga.startGA(100);
+			GA ga = new GA(10,1000,0.6,0.01);
+			System.out.println("iterations: 1000");
+			ga.startGA(1000);
 			ga.print("");
 		}
 		else if(args.length == 6 || args.length == 5)
@@ -180,11 +174,6 @@ public class GA
 		}
 		else
 			System.out.println("Usage: GA.java: line:138");
-	}
-
-	public int fitness() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }
 

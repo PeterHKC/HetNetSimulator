@@ -21,4 +21,5 @@ public class RB
 	
 	public ArrayList<BS> getBSList() {return this.bsList;}
 	public ArrayList<UE> getUEList() {return this.ueList;}
+	public void reset() {this.ueList.clear();this.bsList.clear();}
 }

@@ -69,4 +69,5 @@ public class UE extends Node{
 			System.out.print("-");
 		System.out.println("-");
 	}
+	public void reset() {this.bs=null;}
 }
