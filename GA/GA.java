@@ -1,7 +1,9 @@
 package GA;
 
 import java.util.*;
-import java.io.*;
+
+import Simulator.RBAllocation;
+import Simulator.UserAssociation;
 
 public class GA
 {
@@ -9,7 +11,7 @@ public class GA
 	public int bit_number;
 	public double mutation_rate;
 	public double crossover_rate;
-	public ArrayList<BitString> chromosomes = new ArrayList<BitString>();
+	public ArrayList<Chromosome> chromosomes = new ArrayList<Chromosome>();
 	
 	public GA() throws Exception
 	{/*
@@ -26,78 +28,77 @@ public class GA
 		this.bit_number = bit_number;
 		this.mutation_rate = mutation_rate;
 		this.crossover_rate = crossover_rate;
-		this.initialization();
 	}
 	
 	
-	public void initialization() throws Exception
+	public void initialization(ArrayList<Chromosome> chs) throws Exception
 	{
-		System.out.println("init_number: "+this.init_number);
-		System.out.println("bit_number: "+this.bit_number);
-		System.out.println("crossover_rate: "+this.crossover_rate);
-		System.out.println("mutation_rate: "+this.mutation_rate);
-		for(int i = 0; i < this.init_number; i++)
+		if(chs.size() != this.init_number)
 		{
-			this.chromosomes.add(new BitString(this.bit_number));
+			System.out.println("invalid init number");
+			System.exit(0);
 		}
+		for(Chromosome ch : chs)
+		{
+			if(ch.bit_number != this.bit_number)
+			{
+				System.out.println("invalid bit number");
+				System.exit(0);
+			}
+		}
+		this.chromosomes.addAll(chs);
 	}
 	
 	public void mutationGA()
 	{
+		System.out.println("fuck");
 		for(int i = 0; i < this.chromosomes.size(); i++)
 		{
 			if(Math.random() < this.mutation_rate)
 			{
 				int x = (int) Math.round(Math.random()*(this.bit_number-1));
 				this.chromosomes.get(i).mutation(x);
-				//System.out.println("mutation: "+i+" in index:"+x);
+				System.out.println("mutation: "+i+" in index:"+x);
 			}
 		}
 	}
 	
 	public void crossoverGA()
 	{
-		ArrayList<BitString> temp = new ArrayList<BitString>();
+		ArrayList<Chromosome> temp = new ArrayList<Chromosome>();
 		for(int i = 0; i < this.chromosomes.size(); i++)
 		{
 			if(Math.random() < this.crossover_rate)
 			{
 				int partner = (int) Math.round(Math.random()*(this.init_number-1));
-				//System.out.println("crossover: "+i+" and "+partner+"\t");
+				System.out.println("crossover: "+i+" and "+partner+"\t");
 				while(partner != i)
 				{
 					partner = (int) Math.round(Math.random()*(this.init_number-1));
 				}
-				temp.add((BitString) this.chromosomes.get(i).crossover(this.chromosomes.get(partner)));
-				temp.add((BitString) this.chromosomes.get(partner).crossover(this.chromosomes.get(i)));
+				temp.add((Chromosome) this.chromosomes.get(i).crossover(this.chromosomes.get(partner)));
+				temp.add((Chromosome) this.chromosomes.get(partner).crossover(this.chromosomes.get(i)));
 			}
 		}
 		this.chromosomes.addAll(temp);
 	}
 	
-	public int findMinChromosomes()
-	{
-		int min = this.bit_number+1, index = 0;
-		ArrayList<Integer> values = new ArrayList<Integer>();
-		for(int i = 0; i < this.chromosomes.size(); i ++)
-		{
-			values.add(this.chromosomes.get(i).fitness());
-			if(min > this.chromosomes.get(i).fitness())
-			{
-				min = this.chromosomes.get(i).fitness();
-				index = i;
-			}
-		}
-		return index;
-	}
-	
 	public void selection()
 	{
-		for(int i = 0; this.chromosomes.size()!=this.init_number; i++)
+		while(this.chromosomes.size()!=this.init_number)
 		{
-			int delete_index = this.findMinChromosomes();
-			//System.out.print("delete: "+delete_index+"\t");
-			//this.chromosomes.get(delete_index).printChromosome();
+			int delete_index = 0;
+			int min = 100000;
+			for(int i = 0; i < this.chromosomes.size(); i++)
+			{
+				int m = this.chromosomes.get(i).fitness();
+				if(min >= m)
+				{
+					delete_index = i;
+					min = m;
+				}
+			}
+			//System.out.println("delete: "+String.valueOf(delete_index)+" fitness: "+String.valueOf(min)+" size: "+String.valueOf(this.chromosomes.size()));
 			this.chromosomes.remove(delete_index);
 		}
 	}
@@ -124,23 +125,25 @@ public class GA
 	
 	public void startGA(int iter)
 	{
-		//this.print("");
+		System.out.println("init_number: "+this.init_number);
+		System.out.println("bit_number: "+this.bit_number);
+		System.out.println("crossover_rate: "+this.crossover_rate);
+		System.out.println("mutation_rate: "+this.mutation_rate);
 		
 		//int x = this.findMinChromosomes();
 		//this.chromosomes.get(x).printChromosome();
 		//this.chromosomes.get(0).crossover(this.chromosomes.get(1)).printChromosome();
-		
+		this.print("all");
 		
 		for(int i = 0; i < iter; i ++)
 		{
-			//System.out.println("====i="+i+"====");
+			System.out.println("====i="+i+"====");
 			this.crossoverGA();
-			//this.print();
 			this.mutationGA();
 			//this.print();
 			this.selection();
-			
-			//System.out.println("================");
+			this.print("all");
+			System.out.println("================");
 		}
 	}
 	
@@ -157,10 +160,20 @@ public class GA
 		
 		if(args.length == 0)
 		{
-			GA ga = new GA(10,1000,0.6,0.01);
-			System.out.println("iterations: 1000");
-			ga.startGA(1000);
-			ga.print("");
+			ArrayList<Chromosome> rba = new ArrayList<Chromosome>();
+			ArrayList<Chromosome> uea = new ArrayList<Chromosome>();
+			GA ga_rba = new GA(10,30,0.8,0.05);
+			GA ga_uea = new GA(10,30,0.8,0.05);
+			for(int i = 0; i < 10; i++)
+			{
+				rba.add((Chromosome)new RBAllocation(30));
+				uea.add((Chromosome)new UserAssociation(30));
+			}
+			ga_rba.initialization(rba);
+			ga_uea.initialization(uea);
+			ga_rba.startGA(2000);
+			ga_uea.startGA(2000);
+			ga_rba.print("");
 		}
 		else if(args.length == 6 || args.length == 5)
 		{

@@ -5,20 +5,19 @@ public abstract class Chromosome
 	public int[] x = null;
 	public int bit_number;
 	
-	Chromosome()
+	protected Chromosome()
 	{
+		
 	}
 	
-	Chromosome(int x[], int bit_number)
+	public Chromosome(int x[], int bit_number)
 	{
 		this.bit_number = bit_number;
 		this.x = new int[bit_number];
 		this.x = x;
 	}
 	
-	Chromosome(int bit_number)
-	{
-		this.initialization(bit_number);
+	public Chromosome(int bit_number) {
 	}
 	
 	public void printChromosome()
@@ -28,16 +27,7 @@ public abstract class Chromosome
 		System.out.println("\t"+this.fitness());
 	}
 	
-	private void initialization(int bit_number)
-	{
-		this.bit_number = bit_number;
-		this.x = new int[bit_number];
-		for(int i = 0; i < bit_number; i++)
-		{
-			x[i] = (int) Math.round(Math.random());
-		}
-	}
-	
+	protected abstract void initialization(int bit_number);
 	public abstract void mutation(int index);
 	public abstract Object crossover(Object ch);
 	public abstract int fitness();
