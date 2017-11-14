@@ -9,6 +9,7 @@ public class UE extends Node{
 	 */
 	private dB RSRP = null, RSSI = null, RSRQ = null;
 	private BS bs = null;
+	private RB rb = null;
 	UE(){}
 	public double pingBS(BS bs)
 	{
@@ -30,11 +31,12 @@ public class UE extends Node{
 		this.bs = bs;
 	}
 	
+	public RB getRB() {return this.rb;}
 	public dB getRSRP() {return this.RSRP;}
 	public dB getRSSI() {return this.RSSI;}
 	public dB getRSRQ() {return this.RSRQ;}
 	public BS getBS() {return this.bs;}
-	public void setRSSI(dB RSSI) {this.RSSI = RSSI;this.RSSI.sub(this.RSRP);}
+	public void setRSSI(RB rb) {this.rb = rb; this.RSSI = rb.RSSI;this.RSSI.sub(this.RSRP);}
 	public double getDataRate(dB RSSI)
 	{
 		this.RSSI = RSSI;
@@ -45,7 +47,7 @@ public class UE extends Node{
 	
 	public void print()
 	{
-		for(int i = 0; i < 50; i++)
+		for(int i = 0; i < 30; i++)
 			System.out.print("-");
 		System.out.print("UE: ");
 		System.out.println(this.name);
@@ -63,8 +65,10 @@ public class UE extends Node{
 		System.out.println(this.RSRQ.getdB());
 		System.out.print("efficiency (bits/symbol): ");
 		System.out.println(Util.efficiency(this.RSRQ));
-		System.out.print("BS assgined by: ");
+		System.out.print("assgined by BS: ");
 		System.out.println(this.bs.name);
+		System.out.print("assgined by RB: ");
+		System.out.println(this.rb.name);
 		for(int i = 0; i < 50; i++)
 			System.out.print("-");
 		System.out.println("-");

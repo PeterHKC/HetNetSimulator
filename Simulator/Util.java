@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 
+import com.anselm.plm.utilobj.LogIt;
+
 public class Util {
 	/*
 	 * the HetNet setting
@@ -98,16 +100,17 @@ public class Util {
 	{
 		try
 		{
-			FileWriter fw = new FileWriter(filename);
-			for(int i  = 0 ; i < n; i++)
+			LogIt log = new LogIt();
+			log.setLogFile(filename);
+			for(int i = 0; i < n; i++)
 			{
-				fw.write("ue"+String.valueOf(i)+",");
-				fw.write(String.valueOf(Math.random()*1200-600));
-				fw.write(",");
-				fw.write(String.valueOf(Math.random()*1200-600));
-				fw.write("\n");
+				log.log("ue"+String.valueOf(i)+",");
+				log.log(String.valueOf(Math.random()*1200-600));
+				log.log(",");
+				log.log(String.valueOf(Math.random()*1200-600));
+				log.log("\n");
 			}
-			fw.close();
+			log.close();
 		}
 		catch(Exception ex)
 		{

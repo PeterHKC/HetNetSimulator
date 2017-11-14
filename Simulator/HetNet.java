@@ -4,21 +4,28 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import com.anselm.plm.utilobj.LogIt;
+
 import GA.Chromosome;
 import GA.GA;
 
 public class HetNet
 {
+	static LogIt log = new LogIt();
+	
 	ArrayList<BS> bsList = new ArrayList<BS>();
 	ArrayList<RB> rbList = new ArrayList<RB>();
 	ArrayList<UE> ueList = new ArrayList<UE>();
 	public int UENumber;
 	public int BSNumber;
 	public int RBNumber = 12;
+	private int[] a,b;
 	
-	HetNet()throws Exception{this.initial("config1.csv");}
+	HetNet() throws Exception{}
+	HetNet(int n)throws Exception{this.initial("config1.csv", n);}
+	HetNet(String filename, int n)throws Exception{this.initial(filename, n);}
 	
-	public double run()
+	public double getTotalThroughput()
 	{
 		double th = 0;
 		//this.BestCQI();
@@ -26,10 +33,15 @@ public class HetNet
 		{
 			for(UE ue : rb.getUEList())
 			{
-				ue.setRSSI(rb.RSSI);
+				ue.setRSSI(rb);
+				//System.out.println(ue.getRSSI().getdB());
 				th+=ue.getDataRate(rb.RSSI);
 			}
 		}
+		/*
+		if(this.isValid() == false)
+			return 0;
+			*/
 		return th;
 	}
 	
@@ -42,7 +54,9 @@ public class HetNet
 		System.out.print("RB number: ");
 		System.out.println(this.RBNumber);
 		System.out.print("system total throughput: ");
-		System.out.println(this.run());
+		System.out.println(this.getTotalThroughput());
+		for(UE ue:this.ueList)
+			ue.print();
 	}
 	
 	public void reset()
@@ -55,18 +69,28 @@ public class HetNet
 			rb.reset();
 	}
 	
-	public void userAssociation(int x[])
+	public boolean userAssociation(int x[])
 	{
+		this.a=new int[x.length];
+		
 		for(int i = 0; i < x.length; i++)
 		{
-			this.ueList.get(i).addBS(this.bsList.get(x[i]));				
+			this.a[i]=x[i];
+			this.ueList.get(i).addBS(this.bsList.get(x[i]));		
+			this.bsList.get(x[i]).addService();
 		}
+		return true;
 	}
 	
-	public void RBAllocation(int x[])
+	public boolean RBAllocation(int x[])
 	{
+		this.b=new int[x.length];
 		for(int i = 0; i < x.length; i++)
-			this.rbList.get(x[i]-30).addUE(this.ueList.get(i-30));
+		{
+			this.b[i]=x[i];
+			this.rbList.get(x[i]-1).addUE(this.ueList.get(i));
+		}
+		return true;
 	}
 	
 	public void BestCQI()
@@ -77,13 +101,14 @@ public class HetNet
 			int temp = 0;
 			for(int i = 0; i < this.bsList.size(); i++)
 			{
-				if(ue.pingBS(this.bsList.get(i)) > maxRSRP)
+				if(ue.pingBS(this.bsList.get(i)) > maxRSRP && this.bsList.get(i).getService() <= 12)
 				{
 					temp = i;
 					maxRSRP = ue.pingBS(this.bsList.get(i));
 				}
 			}
 			ue.addBS(this.bsList.get(temp));
+			this.bsList.get(temp).addService();
 		}
 		
 		for(UE ue : this.ueList)
@@ -104,6 +129,7 @@ public class HetNet
 				}
 			}
 			this.rbList.get(temp).addUE(ue);
+			//ue.setRSSI(this.rbList.get(temp).RSSI);
 		}
 	}
 	
@@ -145,13 +171,13 @@ public class HetNet
 		 * setting RB
 		 * note: you must set RSSI for each UE before calculate UE's throughput and so on
 		 */
-		ue1.setRSSI(rb.RSSI);
+		ue1.setRSSI(rb);
 		ue1.print();
-		ue2.setRSSI(rb.RSSI);
+		ue2.setRSSI(rb);
 		ue2.print();
 	}
 	
-	public void initial(String filename)
+	public void initial(String filename, int n)
 	{
 		String line = "";
 		try
@@ -193,10 +219,17 @@ public class HetNet
 					this.UENumber++;
 				}
 			}
-			
+			while(this.UENumber < n)
+			{
+				UE ue = new UE();
+				ue.setName(String.valueOf(this.UENumber++));
+				ue.setXY(Math.random()*1200-600, Math.random()*1200-600);
+				this.ueList.add(ue);
+			}
 			for(int i  = 0; i < RBNumber; i++)
 			{
 				RB rb = new RB();
+				rb.name = "RB"+String.valueOf(i);
 				this.rbList.add(rb);
 			}
 			
@@ -208,9 +241,59 @@ public class HetNet
 		
 	}
 	
+	private boolean isValid()
+	{
+		int[] bs_service = new int[9];
+		for(int i:bs_service) i=0;
+		for(int a:this.a)
+		{
+			bs_service[a]++;
+			if(bs_service[a]>12) return false;
+		}
+		for(int i = 0; i < 30; i++)
+		{
+			for(int j = 0; j < 30; j++)
+			{
+				if(i != j && this.a[i] == this.a[j] && this.b[j] == this.b[i])
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	/*
+	 * arg1: configure file name
+	 * arg2: random UE number
+	 */
+	public static double run(String filename, int n) throws Exception
+	{
+		double total = 0;
+		for(int i = 0; i < 100; i++)
+		{
+			HetNet si = new HetNet(filename, n);
+			si.BestCQI();
+			total+=si.getTotalThroughput();
+		}
+		return (total);
+	}
 	public static void main(String[] args) throws Exception
 	{
-		HetNet si = new HetNet();
-		si.run();
+		log.setLogFile("result1.csv");
+		String conf1 = "config1.csv";
+		String conf2 = "config2.csv";
+		
+		log.log(conf1);
+		
+		for(int i = 1; i <= 100; i++)
+		{
+			log.log(run(conf1, i));
+		}
+		log.log(conf2);
+		for(int i = 1; i <= 100; i++)
+		{
+			log.log(run(conf2, i));
+		}
+		log.close();
 	}
 }

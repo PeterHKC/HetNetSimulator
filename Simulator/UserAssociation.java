@@ -23,6 +23,7 @@ public class UserAssociation extends Chromosome{
 		this.x = new int[bit_number];
 		for(int i = 0; i < bit_number; i++)
 			this.x[i] = (int) Math.random()*9+1;
+		
 	}
 	@Override
 	public void mutation(int index) {
