@@ -4,7 +4,6 @@ import GA.Chromosome;
 
 public class UserAssociation extends Chromosome{
 	
-	int value = 0;
 	UserAssociation(){}
 	public UserAssociation(int n)
 	{
@@ -21,7 +20,7 @@ public class UserAssociation extends Chromosome{
 	protected void initialization(int bit_number) {
 		// TODO Auto-generated method stub
 		this.x = new int[bit_number];
-		for(int i = 0; i < bit_number; i++)
+		for(int i = 0; i < this.bit_number; i++)
 			this.x[i] = (int) (Math.random()*9+1);
 		
 	}
@@ -64,17 +63,5 @@ public class UserAssociation extends Chromosome{
 				temp.setBit(i, parent.x[i]);
 		}
 		return temp;
-	}
-	@Override
-	public int fitness(){
-		// TODO Auto-generated method stub
-		for(int i:this.x)
-			this.value+=i;
-		return this.value;
-	}
-	@Override
-	public void setFitness() {
-		// TODO Auto-generated method stub
-		
 	}
 }

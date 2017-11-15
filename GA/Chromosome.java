@@ -4,6 +4,7 @@ public abstract class Chromosome
 {
 	public int[] x = null;
 	public int bit_number;
+	private double value = 1;
 	
 	protected Chromosome()
 	{
@@ -30,7 +31,13 @@ public abstract class Chromosome
 	protected abstract void initialization(int bit_number);
 	public abstract void mutation(int index);
 	public abstract Object crossover(Object ch);
-	public abstract int fitness();
-	public abstract void setFitness();
+	public double fitness()
+	{
+		return value;
+	}
 	public abstract Object crossover(Object ch, int cut_point);
+	public void setFitness(double v)
+	{
+		this.value = v;
+	}
 }

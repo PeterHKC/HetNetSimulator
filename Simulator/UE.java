@@ -37,14 +37,16 @@ public class UE extends Node{
 	public dB getRSRQ() {return this.RSRQ;}
 	public BS getBS() {return this.bs;}
 	public void setRSSI(RB rb) {this.rb = rb; this.RSSI = rb.RSSI;this.RSSI.sub(this.RSRP);}
-	public double getDataRate(dB RSSI)
+	public void calDataRate(dB RSSI)
 	{
 		this.RSSI = RSSI;
 		this.RSRQ = RSSI.div(this.RSRP,RSSI);
 		this.dataRate = (Util.efficiency(this.RSRQ)*Util.SC*Util.SY)/Util.T/1024;
+	}
+	public double getDataRate()
+	{
 		return this.dataRate;
 	}
-	
 	public void print()
 	{
 		for(int i = 0; i < 30; i++)
@@ -52,7 +54,7 @@ public class UE extends Node{
 		System.out.print("UE: ");
 		System.out.println(this.name);
 		System.out.print("data rate (Kbps): ");
-		System.out.println(this.getDataRate(this.RSSI));
+		System.out.println(this.getDataRate());
 		System.out.print("bs to ue (meter): ");
 		System.out.println(this.distance);
 		System.out.print("RSSI (dB): ");

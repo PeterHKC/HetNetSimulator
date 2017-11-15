@@ -60,18 +60,6 @@ public class BitString extends Chromosome
 	}
 
 	@Override
-	public int fitness() {
-		int f = 0;
-		for(int i = 0; i < this.x.length; i++)
-			f+=this.x[i];
-		return f;
-	}
-	@Override
-	public void setFitness() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
 	public Object crossover(Object ch, int cut_point) {
 		// TODO Auto-generated method stub
 		return null;

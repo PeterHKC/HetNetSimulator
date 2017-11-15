@@ -35,9 +35,11 @@ public class HetNet
 			{
 				ue.setRSSI(rb);
 				//System.out.println(ue.getRSSI().getdB());
-				th+=ue.getDataRate(rb.RSSI);
+				ue.calDataRate(rb.RSSI);
 			}
 		}
+		for(UE ue : this.ueList)
+			th+=ue.getDataRate();
 		/*
 		if(this.isValid() == false)
 			return 0;
@@ -76,8 +78,8 @@ public class HetNet
 		for(int i = 0; i < x.length; i++)
 		{
 			this.a[i]=x[i];
-			this.ueList.get(i).addBS(this.bsList.get(x[i]));		
-			boolean res = this.bsList.get(x[i]).addService();
+			this.ueList.get(i).addBS(this.bsList.get(x[i]-1));		
+			boolean res = this.bsList.get(x[i]-1).addService();
 			if(res == false) return false;
 		}
 		return true;
@@ -244,10 +246,11 @@ public class HetNet
 		
 	}
 	
+	//not use
 	private boolean isValid()
 	{
 		int[] bs_service = new int[9];
-		for(int i:bs_service) i=0;
+		for(int i : bs_service) i=0;
 		for(int a:this.a)
 		{
 			bs_service[a]++;

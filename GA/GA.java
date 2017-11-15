@@ -2,11 +2,14 @@ package GA;
 
 import java.util.*;
 
+import com.anselm.plm.utilobj.LogIt;
+
 import Simulator.RBAllocation;
 import Simulator.UserAssociation;
 
 public class GA
 {
+	static LogIt log = new LogIt();
 	public int init_number;
 	public int bit_number;
 	public double mutation_rate;
@@ -56,9 +59,10 @@ public class GA
 		{
 			if(Math.random() < this.mutation_rate)
 			{
-				int x = (int) Math.round(Math.random()*(this.bit_number-1));
+				int x = (int) (Math.random()*(this.bit_number));
+//				System.out.println(x);
 				this.chromosomes.get(i).mutation(x);
-				System.out.println("mutation: "+i+" in index:"+x);
+//				System.out.println("mutation: "+i+" in index:"+x);
 			}
 		}
 	}
@@ -71,11 +75,11 @@ public class GA
 			if(Math.random() < this.crossover_rate)
 			{
 				int partner = (int) Math.round(Math.random()*(this.init_number-1));
-				System.out.println("crossover: "+i+" and "+partner+"\t");
 				while(partner == i)
 				{
 					partner = (int) Math.round(Math.random()*(this.init_number-1));
 				}
+//				System.out.println("crossover: "+i+" and "+partner+"\t");
 				int cut = (int) Math.round(Math.random()*(this.bit_number-1));
 				temp.add((Chromosome) this.chromosomes.get(i).crossover(this.chromosomes.get(partner),cut));
 				temp.add((Chromosome) this.chromosomes.get(partner).crossover(this.chromosomes.get(partner),cut));
@@ -89,10 +93,10 @@ public class GA
 		while(this.chromosomes.size()!=this.init_number)
 		{
 			int delete_index = 0;
-			int min = 100000;
+			double min = 100000;
 			for(int i = 0; i < this.chromosomes.size(); i++)
 			{
-				int m = this.chromosomes.get(i).fitness();
+				double m = this.chromosomes.get(i).fitness();
 				if(min >= m)
 				{
 					delete_index = i;
@@ -138,18 +142,19 @@ public class GA
 		
 		for(int i = 0; i < iter; i ++)
 		{
-			System.out.println("====i="+i+"====");
+//			System.out.println("====i="+i+"====");
 			this.crossoverGA();
 			this.mutationGA();
 			//this.print();
 			this.selection();
 			//this.print("all");
-			System.out.println("================");
+//			System.out.println("================");
 		}
 	}
 	
 	public static void main(String[] args) throws Exception
 	{
+		log.setLogFile("GA.log");
 		/*
 		arg1: number of initialized chromosomes
 		arg2: bit-string length
@@ -163,18 +168,19 @@ public class GA
 		{
 			ArrayList<Chromosome> rba = new ArrayList<Chromosome>();
 			ArrayList<Chromosome> uea = new ArrayList<Chromosome>();
-			//GA ga_rba = new GA(10,30,0.8,0.05);
+			GA ga_rba = new GA(10,30,0.8,0.05);
 			GA ga_uea = new GA(10,30,0.8,0.05);
 			for(int i = 0; i < 10; i++)
 			{
-				//rba.add((Chromosome)new RBAllocation(30));
+				rba.add((Chromosome)new RBAllocation(30));
 				uea.add((Chromosome)new UserAssociation(30));
 			}
-			//ga_rba.initialization(rba);
+			ga_rba.initialization(rba);
 			ga_uea.initialization(uea);
-			//ga_rba.startGA(1);
-			ga_uea.startGA(1000);
-			//ga_rba.print("all");
+			ga_rba.startGA(20000);
+			ga_uea.startGA(20000);
+			ga_rba.print("all");
+			ga_uea.print("all");
 		}
 		else if(args.length == 6 || args.length == 5)
 		{
