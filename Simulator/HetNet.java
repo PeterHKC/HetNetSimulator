@@ -77,7 +77,8 @@ public class HetNet
 		{
 			this.a[i]=x[i];
 			this.ueList.get(i).addBS(this.bsList.get(x[i]));		
-			this.bsList.get(x[i]).addService();
+			boolean res = this.bsList.get(x[i]).addService();
+			if(res == false) return false;
 		}
 		return true;
 	}
@@ -88,7 +89,9 @@ public class HetNet
 		for(int i = 0; i < x.length; i++)
 		{
 			this.b[i]=x[i];
-			this.rbList.get(x[i]-1).addUE(this.ueList.get(i));
+			boolean res = this.rbList.get(x[i]-1).addUE(this.ueList.get(i));
+			if(res == false)
+				return false;
 		}
 		return true;
 	}

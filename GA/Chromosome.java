@@ -31,4 +31,6 @@ public abstract class Chromosome
 	public abstract void mutation(int index);
 	public abstract Object crossover(Object ch);
 	public abstract int fitness();
+	public abstract void setFitness();
+	public abstract Object crossover(Object ch, int cut_point);
 }

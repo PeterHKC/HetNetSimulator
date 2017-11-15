@@ -56,5 +56,15 @@ public class RBAllocation extends Chromosome{
 		// TODO Auto-generated method stub
 		return this.value;
 	}
+	@Override
+	public void setFitness() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public Object crossover(Object ch, int cut_point) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -51,7 +51,7 @@ public class GA
 	
 	public void mutationGA()
 	{
-		System.out.println("fuck");
+		//System.out.println("fuck");
 		for(int i = 0; i < this.chromosomes.size(); i++)
 		{
 			if(Math.random() < this.mutation_rate)
@@ -72,12 +72,13 @@ public class GA
 			{
 				int partner = (int) Math.round(Math.random()*(this.init_number-1));
 				System.out.println("crossover: "+i+" and "+partner+"\t");
-				while(partner != i)
+				while(partner == i)
 				{
 					partner = (int) Math.round(Math.random()*(this.init_number-1));
 				}
-				temp.add((Chromosome) this.chromosomes.get(i).crossover(this.chromosomes.get(partner)));
-				temp.add((Chromosome) this.chromosomes.get(partner).crossover(this.chromosomes.get(i)));
+				int cut = (int) Math.round(Math.random()*(this.bit_number-1));
+				temp.add((Chromosome) this.chromosomes.get(i).crossover(this.chromosomes.get(partner),cut));
+				temp.add((Chromosome) this.chromosomes.get(partner).crossover(this.chromosomes.get(partner),cut));
 			}
 		}
 		this.chromosomes.addAll(temp);
@@ -142,7 +143,7 @@ public class GA
 			this.mutationGA();
 			//this.print();
 			this.selection();
-			this.print("all");
+			//this.print("all");
 			System.out.println("================");
 		}
 	}
@@ -151,7 +152,7 @@ public class GA
 	{
 		/*
 		arg1: number of initialized chromosomes
-		arg2: bitstring length
+		arg2: bit-string length
 		arg3: crossover rate
 		arg4: mutation rate
 		arg5: number of iteration
@@ -162,18 +163,18 @@ public class GA
 		{
 			ArrayList<Chromosome> rba = new ArrayList<Chromosome>();
 			ArrayList<Chromosome> uea = new ArrayList<Chromosome>();
-			GA ga_rba = new GA(10,30,0.8,0.05);
+			//GA ga_rba = new GA(10,30,0.8,0.05);
 			GA ga_uea = new GA(10,30,0.8,0.05);
 			for(int i = 0; i < 10; i++)
 			{
-				rba.add((Chromosome)new RBAllocation(30));
+				//rba.add((Chromosome)new RBAllocation(30));
 				uea.add((Chromosome)new UserAssociation(30));
 			}
-			ga_rba.initialization(rba);
+			//ga_rba.initialization(rba);
 			ga_uea.initialization(uea);
-			ga_rba.startGA(2000);
-			ga_uea.startGA(2000);
-			ga_rba.print("");
+			//ga_rba.startGA(1);
+			ga_uea.startGA(1000);
+			//ga_rba.print("all");
 		}
 		else if(args.length == 6 || args.length == 5)
 		{

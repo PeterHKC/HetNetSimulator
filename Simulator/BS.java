@@ -1,7 +1,8 @@
 package Simulator;
 
 public class BS extends Node{
-
+	
+	private int RBNumber = 12;
 	private dB transmit_power = null;
 	private dB antenna_gain = null;
 	private double path_loss_para1;
@@ -18,7 +19,7 @@ public class BS extends Node{
 		path_loss_para1 = p1;
 		path_loss_para2 = p2;
 	}
-	public void addService() {this.service++;}
+	public boolean addService() {this.service++; if(this.service>this.RBNumber) return false; return true;}
 	public int getService() {return this.service;}
 	public dB getTransmitPower() {return this.transmit_power;}
 	public dB getAntennaGain() {return this.antenna_gain;}

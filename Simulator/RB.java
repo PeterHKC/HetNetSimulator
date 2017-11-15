@@ -8,16 +8,20 @@ public class RB
 	 * RSSI represents the total received wide-band power by UE
 	 */
 	dB RSSI = new dB(0);
+	
 	public String name;
 	private ArrayList<UE> ueList = new ArrayList<UE>();
 	private ArrayList<BS> bsList = new ArrayList<BS>();
 	RB(){}
 	
-	public void addUE(UE ue)
+	public boolean addUE(UE ue)
 	{
+		if(this.bsList.contains(ue.getBS()))
+			return false;
 		this.RSSI.add(ue.getRSRP());
 		this.ueList.add(ue);
 		this.bsList.add(ue.getBS());
+		return true;
 	}
 	
 	public ArrayList<BS> getBSList() {return this.bsList;}
