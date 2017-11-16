@@ -78,9 +78,8 @@ public class HetNet
 		for(int i = 0; i < x.length; i++)
 		{
 			this.a[i]=x[i];
-			this.ueList.get(i).addBS(this.bsList.get(x[i]-1));		
-			boolean res = this.bsList.get(x[i]-1).addService();
-			if(res == false) return false;
+			this.ueList.get(i).addBS(this.bsList.get(x[i]-1));
+			if(this.bsList.get(x[i]-1).getService() > 12) return false;
 		}
 		return true;
 	}
@@ -272,16 +271,16 @@ public class HetNet
 	 * arg1: configure file name
 	 * arg2: random UE number
 	 */
-	public static double run(String filename, int n) throws Exception
+	public static void run(String filename, int n) throws Exception
 	{
-		double total = 0;
+		double th = 0;
 		for(int i = 0; i < 100; i++)
 		{
 			HetNet si = new HetNet(filename, n);
 			si.BestCQI();
-			total+=si.getTotalThroughput();
+			th+=si.getTotalThroughput();
 		}
-		return (total);
+		log.log(th/100);
 	}
 	public static void main(String[] args) throws Exception
 	{
@@ -293,12 +292,12 @@ public class HetNet
 		
 		for(int i = 1; i <= 100; i++)
 		{
-			log.log(run(conf1, i));
+			run(conf1, i);
 		}
 		log.log(conf2);
 		for(int i = 1; i <= 100; i++)
 		{
-			log.log(run(conf2, i));
+			run(conf2, i);
 		}
 		log.close();
 	}

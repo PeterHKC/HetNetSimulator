@@ -24,7 +24,7 @@ public abstract class Chromosome
 	public void printChromosome()
 	{
 		for(int i = 0; i < this.bit_number; i++)
-			System.out.print(x[i]);
+			System.out.print(String.valueOf(x[i])+" ");
 		System.out.println("\t"+this.fitness());
 	}
 	

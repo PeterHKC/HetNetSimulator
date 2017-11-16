@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.anselm.plm.utilobj.LogIt;
 
+import Simulator.HetNet;
 import Simulator.RBAllocation;
 import Simulator.UserAssociation;
 
@@ -146,11 +147,14 @@ public class GA
 			this.crossoverGA();
 			this.mutationGA();
 			//this.print();
+			
 			this.selection();
 			//this.print("all");
 //			System.out.println("================");
 		}
 	}
+	
+	
 	
 	public static void main(String[] args) throws Exception
 	{
@@ -177,8 +181,10 @@ public class GA
 			}
 			ga_rba.initialization(rba);
 			ga_uea.initialization(uea);
-			ga_rba.startGA(20000);
-			ga_uea.startGA(20000);
+			
+			
+			
+			
 			ga_rba.print("all");
 			ga_uea.print("all");
 		}
