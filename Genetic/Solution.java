@@ -92,9 +92,43 @@ public class Solution
 		return true;
 	}
 	
+	public boolean setMap()
+	{
+		for(int i = 0; i < BSNumber; i++)
+			for(int j = 0; j < RBNumber; j++)
+				this.map[i][j] = -1;
+		for(int i : this.choose.keySet())
+		{
+			int x = this.choose.get(i).get(0);
+			int y = this.choose.get(i).get(1);
+			if(this.map[x][y] != -1)
+			{
+				for(int k = 0; this.recover(i, x, y) == false; k++);
+					
+			}
+			else
+				this.map[x][y] = i;
+		}
+		
+		return false;
+	}
+	public boolean isValid()
+	{
+		int count = 0;
+		for(int i = 0; i < this.BSNumber; i++)
+			for(int j = 0; j < this.RBNumber; j++)
+				count+=this.map[i][j];
+		//check map is valid
+		if(count != (0+this.number-1)*this.number/2-this.BSNumber*this.RBNumber+this.number)
+		{
+			System.out.println(count);
+			System.out.println((0+this.number-1)*this.number/2-this.BSNumber*this.RBNumber+this.number);
+			return false;
+		}
+		return true;
+	}
 	public boolean setChoose()
 	{
-		//this.choose.clear();
 		HashMap<Integer,Vector<Integer>> temp = new HashMap<Integer,Vector<Integer>>();
 		int count = 0;
 		for(int i = 0; i < this.BSNumber; i++)
@@ -108,7 +142,7 @@ public class Solution
 				Vector<Integer> v = new Vector<Integer>(2);
 				if(temp.containsKey(this.map[i][j]))
 				{
-					System.out.print("debug");
+					System.out.print("error: HashMap: duplicate key");
 					return false;
 				}
 				else
@@ -118,13 +152,8 @@ public class Solution
 				}
 			}
 		}
-		//check map is valid
-		if(count != (0+this.number-1)*this.number/2-this.BSNumber*this.RBNumber+this.number)
-		{
-			System.out.println(count);
-			System.out.println((0+this.number-1)*this.number/2-this.BSNumber*this.RBNumber+this.number);
+		if(this.isValid()==false)
 			return false;
-		}
 		this.choose.clear();
 		this.choose.putAll(temp);
 		return true;
@@ -148,13 +177,22 @@ public class Solution
 	
 	public Solution crossover(Solution sol, int index)
 	{
-		Solution newsol = new Solution();
-		for(int i = 0; i < this.number; i++)
-		{
-			
-		}
+		Solution newsol = null;
 		
-		return null;
+		for(int i : this.choose.keySet())
+		{
+			if(i > index)
+			{
+				newsol.choose.put(i, sol.choose.get(i));
+			}
+			else
+			{
+				newsol.choose.put(i, this.choose.get(i));
+			}
+		}
+		if(newsol.setMap()==false)
+			return null;
+		return newsol;
 	}
 	
 	public boolean mutation(int index)
@@ -171,19 +209,37 @@ public class Solution
 				}
 			}
 		}
-		return false;
+		boolean ret = this.setChoose();
+		return ret;
 	}
-	
-	private void recover(int ue,int bs, int rb)
+	private boolean recover(int ue,int bs, int rb)
 	{
-		for(int i = 0; ; i+=90)
+		if(bs >= BSNumber)
+			bs = (int) (Math.random()*BSNumber);
+		if(rb >= RBNumber)
+			rb = (int) (Math.random()*RBNumber);
+		int finish = 0;
+		for(int i = 0; true; i+=90)
 		{
 			int offset = i/360;
 			double x = bs + Math.sin(Math.toRadians(i)) + offset;
 			double y = rb + Math.cos(Math.toRadians(i)) + offset;
+			if(x >= this.BSNumber || y >= this.RBNumber)
+			{
+				finish++;
+				if(finish > 4)
+					return false;
+				continue;
+			}
 			if(this.map[(int)x][(int)y] == -1)
 			{
 				this.map[(int)x][(int)y] = ue;
+//				this.choose.get(ue).clear();
+//				Vector<Integer> v = new Vector<Integer>();
+//				v.add((int)x);
+//				v.add((int)y);
+//				this.choose.put(ue, v);
+				return true;
 			}
 		}
 	}
@@ -196,6 +252,23 @@ public class Solution
 		Solution.printMap(sol);
 		log.log(sol.setChoose());
 		Solution.printChoose(sol);
+		
+//		log.log(sol.mutation(12));
+//		log.log(sol.setChoose());
+//		Solution.printMap(sol);
+//		Solution.printChoose(sol);
+		
+		Solution sol2 = new Solution();
+		Solution.printMap(sol2);
+		log.log(sol2.setChoose());
+		Solution.printChoose(sol2);
+		
+		Solution sol3 = null;
+		sol3 = sol.crossover(sol3, 15);
+		Solution.printMap(sol3);
+		log.log(sol3.setChoose());
+		Solution.printChoose(sol3);
+		
 //		for(int i : sol.getUserAssociation())
 //			log.log(i);
 //		for(int i : sol.getRBAllocation())
