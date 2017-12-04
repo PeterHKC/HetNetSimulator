@@ -11,7 +11,7 @@ public class Solution_2 {
 
 	private int BSNumber = 9;
 	private int RBNumber = 12;
-	private int UENumber = 30;
+	private int UENumber = 100;
 	
 	public HashMap<Integer,Vector<Integer>> choose = new HashMap<Integer,Vector<Integer>>();
 	private int map[][];
@@ -171,7 +171,7 @@ public class Solution_2 {
 			int offset = i/360;
 			double x = bs + Math.sin(Math.toRadians(i)) + offset;
 			double y = rb + Math.cos(Math.toRadians(i)) + offset;
-			if(x >= this.BSNumber || y >= this.RBNumber)
+			if(x >= this.BSNumber || y >= this.RBNumber || x < 0 || y < 0)
 			{
 				finish++;
 				if(finish > 4)
@@ -228,13 +228,13 @@ public class Solution_2 {
 		}
 	}
 	
-	public static double fitness(Solution_2 sol) throws Exception
+	public double fitness() throws Exception
 	{
-		HetNet net = new HetNet("config1.csv", sol.UENumber);
-		net.userAssociation(sol.getUserAssociation());
-		net.RBAllocation(sol.getRBAllocation());
-		
+		HetNet net = new HetNet("config1.csv", this.UENumber);
+		boolean ret = net.userAssociation(this.getUserAssociation());
+		boolean ret2 = net.RBAllocation(this.getRBAllocation());
 		double th = net.getTotalThroughput();
+		//net.print();
 		return th;
 	}
 	
@@ -257,7 +257,7 @@ public class Solution_2 {
 //		for(int i : sol.getRBAllocation())
 //			log.log(i);
 		
-		log.log(Solution_2.fitness(sol3));
+		log.log(sol3.fitness());
 		
 		//test mutation
 //		sol.Mutation(12);
