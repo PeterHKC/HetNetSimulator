@@ -11,7 +11,7 @@ public class Solution_2 {
 
 	private int BSNumber = 9;
 	private int RBNumber = 12;
-	private int UENumber = 100;
+	public int UENumber = 30;
 	
 	public HashMap<Integer,Vector<Integer>> choose = new HashMap<Integer,Vector<Integer>>();
 	private int map[][];
