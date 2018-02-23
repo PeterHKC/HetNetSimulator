@@ -19,7 +19,7 @@ public class UE extends Node{
 		double pathloss = bs.pathLossModel(dis);
 		dB temp = bs.getAntennaGain().mul(bs.getAntennaGain(), bs.getTransmitPower());
 		dB RSRP = temp.div(temp, pathloss);
-		return RSRP.getdB();
+		return RSRP.getWatt();
 	}
 	public void addBS(BS bs)
 	{

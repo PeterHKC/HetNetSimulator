@@ -45,7 +45,7 @@ public class Genetic
 		{
 			if(Math.random()<this.crossover_rate)
 			{
-				System.out.print("c");
+				//System.out.print("c");
 				int partner = (int)(Math.random()*this.init_number);
 				int ue = (int)(Math.random()*this.bit_number);
 				this.chromosomes.add(this.chromosomes.get(i).crossover(this.chromosomes.get(partner), ue));
@@ -61,7 +61,7 @@ public class Genetic
 			if(Math.random() < this.mutation_rate)
 			{
 				this.chromosomes.get(i).Mutation((int)(Math.random()*this.bit_number));
-				System.out.print("m");
+				//System.out.print("m");
 			}
 		}
 	}
@@ -82,7 +82,7 @@ public class Genetic
 				}
 			}
 			this.chromosomes.remove(delete_index);
-			System.out.print("d");
+			//System.out.print("d");
 			//log.log("delete: "+String.valueOf(delete_index)+" value: "+String.valueOf(min));
 		}
 		System.out.println();
@@ -101,8 +101,8 @@ public class Genetic
 				max = m;
 			}
 		}
-		
-		System.out.println(this.chromosomes.get(max_index).isValid());
+		//System.out.println(this.chromosomes.get(max_index).fitness());
+		//System.out.println(this.chromosomes.get(max_index).isValid());
 		return max;
 	}
 	
@@ -116,59 +116,99 @@ public class Genetic
 		}
 	}
 	
-	public static void runGA(int iter, int in, int bn, double mr, double cr, String outfile) throws Exception
+	public static double[] runGA(int iter, int in, int bn, double mr, double cr, int sk) throws Exception
 	{
+		int times = 30;
+		int skip = sk;
+		double[] x = new double[iter/skip];
+		for(double i : x)
+			i = 0;
 		//version++;
-		LogIt log = new LogIt();
 		Genetic ga = new Genetic(in, bn, mr, cr);
-		log.log(",init_number: ,"+ga.init_number);
-		log.log(",bit_number: ,"+ga.bit_number);
-		log.log(",crossover_rate: ,"+ga.crossover_rate);
-		log.log(",mutation_rate: ,"+ga.mutation_rate);
-		log.setLogFile(outfile
-				+String.valueOf((ga.init_number))+"_"
-				+String.valueOf((ga.bit_number))+"_"
-				+String.valueOf((ga.crossover_rate))+"_"
-				+String.valueOf((ga.mutation_rate))+"_"
-				+String.valueOf(version)+".csv");
-		
-		for(int i = 0; i < iter; i++)
-		{
-			ga.crossover();
-			ga.mutation();
-			ga.selection();
-			//ga.printChromosomesFitness();
-			log.log(ga.fitness());
-			
-		}
-		log.close();
+		System.out.println(",init_number: ,"+ga.init_number);
+		System.out.println(",bit_number: ,"+ga.bit_number);
+		System.out.println(",crossover_rate: ,"+ga.crossover_rate);
+		System.out.println(",mutation_rate: ,"+ga.mutation_rate);
+//		log.setLogFile(outfile
+//				+String.valueOf((ga.init_number))+"_"
+//				+String.valueOf((ga.bit_number))+"_"
+//				+String.valueOf((ga.crossover_rate))+"_"
+//				+String.valueOf((ga.mutation_rate))+"_"
+//				+String.valueOf(version)+".csv");
+		for(int j = 0; j < times; j++)
+			for(int i = 0; i < iter; i+=skip)
+			{
+				ga.crossover();
+				ga.mutation();
+				ga.selection();
+				//ga.printChromosomesFitness();
+				//log.log(ga.fitness());
+				System.out.println(ga.fitness());
+				x[i/skip] += ga.fitness();
+			}
+		for(int i = 0; i < x.length; i++)
+			x[i] = x[i]/times;
+		return x;
 	}
 	
+	//default args: 100 30 30 m c 
 	public static void main(String[] args) throws Exception 
 	{
 		// TODO Auto-generated method stub
 		//double i=0.5;
-//		for(int j = 0 ; j < 10; j++)
+		String customizedName = "mutation_";
+		
+		//int times = 1;
+			//System.out.print(j);
+		for(double j = 0.2; j <= 1; j+=0.2)
+		{
+			LogIt log = new LogIt();
+			log.setLogFile("result5/"+customizedName+String.valueOf((int)(j*10))+".csv");
+			log.log("in,bn,mr,cr");
+			log.log("30,30,"+String.valueOf((int)(j*10))+",i");
+			StringBuilder index = new StringBuilder("");
+			for(int i = 0; i <= 100; i++)
+				index.append(","+String.valueOf(i));
+			log.log(index);
+			
+			for(double i = 0.2; i <= 1; i+=0.2)
+			{
+				//m c
+				double x[] = runGA(100, 30, 30, j, i, 1);
+				StringBuilder str = new StringBuilder(String.valueOf(i)+",");
+				for(double k : x)
+				{
+					str.append(String.valueOf(k)
+							+",");
+				}
+				log.log(str);
+			}
+			log.close();
+		}
+//		for(int j = 0 ; j < 1; j++)
 //		{
 //			version = j;
 //			//System.out.print(j);
-//			for(double i = 0.2; i < 1; i+=0.2)
-//				runGA(100, 10, 30, i, 0.8, "m");
+//			for(int i = 10; i < 50; i+=10)
+//				runGA(100, 30, 30, 0.8, 0.8, "test");
 //		}
-		for(int j = 0 ; j < 1; j++)
-		{
-			version = j;
-			//System.out.print(j);
-			for(int i = 10; i < 50; i+=10)
-				runGA(100, i, 30, 0.8, 0.8, "i");
-		}
+		
 //		for(int i = 30; i <= 100; i++)
 //		{
 //			Genetic ga = new Genetic(i);
 //			ga.runGA(100);
 //		}
 		
-//		runGA(1,20,12,0.8,0.2,"test");
+		/*test HetNet*/
+//		LogIt log = new LogIt();
+//		Genetic ga = new Genetic(1, 30, 0.8, 0.5);
+//		for(int i : ga.chromosomes.get(0).getUserAssociation())
+//			System.out.print(String.format("%2d", i)+" ");
+//		System.out.println();
+//		for(int i : ga.chromosomes.get(0).getRBAllocation())
+//			System.out.print(String.format("%2d", i)+" ");
+//		System.out.println(ga.fitness());
+		
 //		Solution_2.printMap(ga.chromosomes.get(0));
 //		Solution_2.printChoose(ga.chromosomes.get(0));
 //		log.log(ga.fitness());

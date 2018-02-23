@@ -104,21 +104,20 @@ public class Util {
 			log.setLogFile(filename);
 			for(int i = 0; i < n; i++)
 			{
-				log.log("ue"+String.valueOf(i)+",");
-				log.log(String.valueOf(Math.random()*1200-600));
-				log.log(",");
-				log.log(String.valueOf(Math.random()*1200-600));
-				log.log("\n");
+				log.log("ue"+String.valueOf(i)+","
+						+String.valueOf(Math.random()*1200-600)
+						+","+String.valueOf(Math.random()*1200-600));
 			}
 			log.close();
 		}
 		catch(Exception ex)
 		{
 			System.out.println("IOException: in "+filename);
+			ex.printStackTrace();
 		}
 	}
 	public static void main(String[] args)
 	{
-		genUEData("config1.csv", 30);
+		genUEData("ue.csv", 30);
 	}
 }

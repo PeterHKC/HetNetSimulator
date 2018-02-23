@@ -16,7 +16,7 @@ public class RB
 	
 	public boolean addUE(UE ue)
 	{
-		if(this.bsList.contains(ue.getBS()))
+		if(this.bsList.contains(ue.getBS()) || this.ueList.contains(ue))
 			return false;
 		this.RSSI.add(ue.getRSRP());
 		this.ueList.add(ue);

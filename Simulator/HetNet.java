@@ -13,9 +13,9 @@ public class HetNet
 {
 	static LogIt log = new LogIt();
 	
-	ArrayList<BS> bsList = new ArrayList<BS>();
-	ArrayList<RB> rbList = new ArrayList<RB>();
-	ArrayList<UE> ueList = new ArrayList<UE>();
+	public ArrayList<BS> bsList = new ArrayList<BS>();
+	public ArrayList<RB> rbList = new ArrayList<RB>();
+	public ArrayList<UE> ueList = new ArrayList<UE>();
 	public int UENumber;
 	public int BSNumber;
 	public int RBNumber = 12;
@@ -23,7 +23,7 @@ public class HetNet
 	
 	HetNet() throws Exception{}
 	HetNet(int n)throws Exception{this.initial("config1.csv", n);}
-	HetNet(String filename, int n)throws Exception{this.initial(filename, n);}
+	public HetNet(String filename, int n)throws Exception{this.initial(filename, n);}
 	
 	public double getTotalThroughput()
 	{
@@ -39,7 +39,11 @@ public class HetNet
 			}
 		}
 		for(UE ue : this.ueList)
+		{
 			th+=ue.getDataRate();
+			//ue.print();
+			//System.out.println(ue.getDataRate());
+		}
 		/*
 		if(this.isValid() == false)
 			return 0;
@@ -73,28 +77,54 @@ public class HetNet
 	
 	public boolean userAssociation(int x[])
 	{
+		this.UENumber = x.length;
 		this.a=new int[x.length];
 		
 		for(int i = 0; i < x.length; i++)
 		{
 			this.a[i]=x[i];
-			this.ueList.get(i).addBS(this.bsList.get(x[i]-1));
-			if(this.bsList.get(x[i]-1).getService() > 12) return false;
+			this.ueList.get(i).addBS(this.bsList.get(x[i]));
+			if(this.bsList.get(x[i]).getService() > 12) return false;
 		}
 		return true;
 	}
 	
 	public boolean RBAllocation(int x[])
 	{
+		this.UENumber = x.length;
 		this.b=new int[x.length];
 		for(int i = 0; i < x.length; i++)
 		{
 			this.b[i]=x[i];
-			boolean res = this.rbList.get(x[i]-1).addUE(this.ueList.get(i));
+			boolean res = this.rbList.get(x[i]).addUE(this.ueList.get(i));
 			if(res == false)
 				return false;
 		}
 		return true;
+	}
+	
+	public void autoRBAllocation()
+	{
+		for(UE ue : this.ueList)
+		{
+			double minRSSI = 10000;
+			int temp = 0;
+			for(int i = 0; i < this.rbList.size(); i++)
+			{
+				if(this.rbList.get(i).RSSI.getdB() == 0)
+				{
+					this.rbList.get(i).addUE(ue);
+					break;
+				}
+				else if(this.rbList.get(i).RSSI.getdB() < minRSSI && this.rbList.get(i).getBSList().contains(ue.getBS()) == false)
+				{
+					temp = i;
+					minRSSI = this.rbList.get(i).RSSI.getdB();
+				}
+			}
+			this.rbList.get(temp).addUE(ue);
+			//ue.setRSSI(this.rbList.get(temp).RSSI);
+		}
 	}
 	
 	public void BestCQI()
@@ -273,32 +303,39 @@ public class HetNet
 	 */
 	public static void run(String filename, int n) throws Exception
 	{
+		int iter = 1;
 		double th = 0;
-		for(int i = 0; i < 100; i++)
+		for(int i = 0; i < iter; i++)
 		{
 			HetNet si = new HetNet(filename, n);
 			si.BestCQI();
 			th+=si.getTotalThroughput();
 		}
-		log.log(th/100);
+		log.log(th/iter);
 	}
 	public static void main(String[] args) throws Exception
 	{
-		log.setLogFile("result1.csv");
 		String conf1 = "config1.csv";
 		String conf2 = "config2.csv";
 		
-		log.log(conf1);
+//		HetNet si = new HetNet(conf2, 1);
+//		si.BestCQI();
+//		//si.print();
+//		log.log(si.getTotalThroughput());
 		
-		for(int i = 1; i <= 100; i++)
-		{
-			run(conf1, i);
-		}
-		log.log(conf2);
-		for(int i = 1; i <= 100; i++)
-		{
-			run(conf2, i);
-		}
-		log.close();
+		log.setLogFile("result1.csv");
+		log.log(conf1);
+		run(conf1, 30);
+		
+//		for(int i = 30; i <= 100; i++)
+//		{
+//			run(conf1, i);
+//		}
+//		log.log(conf2);
+//		for(int i = 30; i <= 100; i++)
+//		{
+//			run(conf2, i);
+//		}
+//		log.close();
 	}
 }
